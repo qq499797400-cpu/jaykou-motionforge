@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>使用教程 · 嘉Jaykou动效工作台</title>
+<meta name="description" content="嘉Jaykou动效工作台完整使用教程：怎么挑动效、怎么调、怎么导出，以及「怎么把一个动效变成一模一样的东西」——三种获取方式的区别与选择。">
+<style>
+  :root{
+    --accent:#FF5A1F; --accent-2:#7C5CFF;
+    --bg:#fff; --bg-2:#F5F6F8; --bg-3:#ECEEF2;
+    --text:#0D1119; --dim:#566074; --dim-2:#8A93A5;
+    --line:rgba(17,24,39,.09); --line-2:rgba(17,24,39,.16);
+    --glow:rgba(255,90,31,.16);
+    --r:18px;
+    --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--font); color:var(--text); background:var(--bg);
+    -webkit-font-smoothing:antialiased; line-height:1.75;
+  }
+  /* 环境光斑，与工作台同一套视觉语言 */
+  body::before{
+    content:''; position:fixed; inset:-22%; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(40% 38% at 14% 12%, color-mix(in srgb,var(--accent) 26%,transparent), transparent 70%),
+      radial-gradient(38% 36% at 86% 8%, color-mix(in srgb,var(--accent-2) 24%,transparent), transparent 70%),
+      radial-gradient(44% 42% at 76% 92%, rgba(46,155,255,.16), transparent 72%);
+    filter:blur(90px) saturate(1.15); opacity:.5;
+  }
+  .page{position:relative; z-index:1; max-width:900px; margin:0 auto; padding:44px 22px 90px}
+
+  .hero{display:flex; align-items:center; gap:14px; margin-bottom:10px}
+  .mark{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;
+    font-weight:800; font-size:20px; box-shadow:0 10px 26px var(--glow)}
+  .hero h1{font-size:27px; font-weight:800; letter-spacing:-.02em; line-height:1.25}
+  .hero p{font-size:13px; color:var(--dim); margin-top:3px}
+  .backlink{display:inline-flex;align-items:center;gap:6px;margin-bottom:26px;font-size:12.5px;
+    color:var(--dim);text-decoration:none;border-bottom:1px dashed var(--line-2);padding-bottom:2px}
+  .backlink:hover{color:var(--accent)}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--accent);text-transform:uppercase;margin-bottom:8px}
+
+  .lead{font-size:15px;color:var(--dim);padding:16px 18px;border-radius:var(--r);
+    background:var(--bg-2);border:1px solid var(--line);margin-bottom:34px}
+  .lead b{color:var(--text)}
+
+  h2{font-size:21px;font-weight:800;letter-spacing:-.01em;margin:44px 0 14px;display:flex;align-items:baseline;gap:10px}
+  h2 .n{font-family:var(--mono);font-size:12px;color:#fff;background:linear-gradient(120deg,var(--accent),var(--accent-2));
+    padding:4px 9px;border-radius:8px;font-weight:700;letter-spacing:.06em}
+  h3{font-size:15.5px;font-weight:700;margin:24px 0 8px}
+  p{margin-bottom:12px;font-size:14px;color:var(--dim)}
+  p b, li b{color:var(--text)}
+  ul,ol{margin:0 0 14px 20px;font-size:14px;color:var(--dim)}
+  li{margin-bottom:7px}
+  code{font-family:var(--mono);font-size:12px;padding:2px 6px;border-radius:6px;background:var(--bg-3);color:var(--accent)}
+  a{color:var(--accent)}
+  .card{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin:14px 0}
+  .card.warn{background:color-mix(in srgb,var(--accent) 8%,var(--bg-2));border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+
+  /* 步骤 */
+  .steps{counter-reset:s;display:flex;flex-direction:column;gap:12px}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px}
+  .step::before{counter-increment:s;content:counter(s);width:34px;height:34px;border-radius:11px;
+    display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  .step h3{margin:4px 0 4px}
+  .step p{margin:0;font-size:13.5px}
+
+  /* 对照表 */
+  .table{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:14px 0}
+  .trow{display:grid;grid-template-columns:1.25fr 1.6fr .6fr;gap:12px;padding:12px 16px;font-size:13px;
+    color:var(--dim);border-top:1px solid var(--line);align-items:center;background:var(--bg)}
+  .trow:nth-child(even){background:var(--bg-2)}
+  .trow:first-child{border-top:0;background:var(--bg-3);font-size:11px;font-weight:700;
+    letter-spacing:.1em;color:var(--dim-2);text-transform:uppercase}
+  .trow b{color:var(--text)}
+  .ok{color:#12A150;font-weight:800;font-family:var(--mono)}
+  .mid{color:#C2820B;font-weight:800;font-family:var(--mono)}
+  .bad{color:#D93025;font-weight:800;font-family:var(--mono)}
+
+  /* 三模式卡 */
+  .modes{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin:14px 0}
+  .mode{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:16px 17px;position:relative;overflow:hidden}
+  .mode.best{border-color:color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 7%,var(--bg-2))}
+  .mode .tag{position:absolute;top:0;right:0;font-size:9.5px;font-weight:800;letter-spacing:.1em;color:#fff;
+    padding:4px 10px;border-radius:0 var(--r) 0 12px;background:linear-gradient(120deg,var(--accent),var(--accent-2))}
+  .mode h3{margin:0 0 6px;font-size:15px}
+  .mode p{font-size:13px;margin:0 0 8px}
+  .mode ul{margin:0 0 0 18px;font-size:12.5px}
+  .mode .fid{font-size:11.5px;color:var(--dim-2);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line-2)}
+
+  /* FAQ */
+  details{background:var(--bg-2);border:1px solid var(--line);border-radius:14px;padding:13px 16px;margin-bottom:9px}
+  details[open]{border-color:var(--line-2)}
+  summary{cursor:pointer;font-weight:700;font-size:13.5px;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary::before{content:'＋';color:var(--accent);margin-right:9px;font-weight:800}
+  details[open] summary::before{content:'－'}
+  details p{margin:10px 0 2px;font-size:13px}
+
+  /* 快捷键 */
+  .keys{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .key{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--dim);
+    background:var(--bg-2);border:1px solid var(--line);border-radius:99px;padding:6px 12px}
+  .key kbd{font-family:var(--mono);font-size:11px;background:var(--bg-3);border:1px solid var(--line-2);
+    border-radius:6px;padding:1px 6px;color:var(--text)}
+
+  /* 小贴士 */
+  .tip{font-size:13px;color:var(--dim);background:var(--bg-2);border:1px solid var(--line);
+    border-radius:12px;padding:10px 14px;margin:12px 0}
+  .tip code{font-family:var(--mono);font-size:12px;color:var(--accent,#FF5A1F)}
+
+  /* 版本进化 */
+  .changelog{margin:12px 0;border-left:2px solid var(--line-2);padding-left:18px;display:flex;flex-direction:column;gap:10px}
+  .cl-item{display:flex;gap:12px;font-size:13.5px;line-height:1.55}
+  .cl-item b{flex:0 0 34px;font-family:var(--mono);font-size:12px;color:var(--accent,#FF5A1F);padding-top:2px}
+  .cl-item span{color:var(--dim)}
+
+  footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;color:var(--dim-2)}
+  footer a{color:var(--dim)}
+
+  @media (max-width:640px){
+    .page{padding:28px 16px 70px}
+    .hero h1{font-size:22px}
+    .trow{grid-template-columns:1fr;gap:3px}
+    .trow:first-child{display:none}
+    h2{font-size:18.5px}
+  }
+  @media print{
+    body::before{display:none}
+    .page{max-width:none}
+    details{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="mark">嘉</div>
+    <div>
+      <h1>嘉Jaykou动效工作台 · 使用教程</h1>
+      <p>468 个可调可导出的 Canvas 动效 —— 从挑到调，再到真正落地</p>
+    </div>
+  </div>
+  <a class="backlink" href="index.html">← 回到工作台</a>
+
+  <p class="lead">
+    这份教程解决两个问题：<b>怎么用</b>（三分钟上手），以及最容易踩坑的那个——<b>怎么把一个动效变成"我自己的"东西</b>。
+    先说结论：<b>AI 提示词不可能保证"复制粘贴就一模一样"</b>，真正能做到 100% 一致的是<b>源码通道</b>。下面会讲清楚三种方式的区别，你对号入座即可。
+  </p>
+
+  <h2><span class="n">01</span> 三分钟上手</h2>
+  <div class="steps">
+    <div class="step">
+      <div>
+        <h3>挑一个动效</h3>
+        <p>点右上角 <code>动效库</code>（或按 <code>B</code>）。顶部一排是<b>分类快捷筛选</b>，点一下即筛；往下是卡片墙，鼠标悬停卡片会实时预览。也可以用顶部搜索框直接搜关键词（如 <code>标题</code>、<code>粒子</code>、<code>K线</code>）。找到喜欢的，点卡片进入工作台。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div>
+        <h3>调成你要的样子</h3>
+        <p>右侧 <code>参数</code> 面板改文案、颜色、速度、数量……每改一处画面立刻刷新。想换整体气质就去 <code>配色背景</code>：一键换主题预设，或拖动 <b>随机种子</b> —— 同一个动效换个种子就是另一种形态，但拖动时间轴画面不会乱跳。</p>
+      </div>
+    </div>
+    <div class="step">
+      <div>
+        <h3>按用途导出</h3>
+        <p>右侧 <code>导出</code> 面板：剪进视频用 <b>MP4</b>、公众号/小红书用 <b>GIF</b>、做封面用 <b>PNG</b>、嵌网站用 <b>单文件 HTML / React 组件 / iframe</b>。想串成一条片，就点 <code>+ 加入当前动效</code> 组成<b>场景序列</b>，再整条录制。</p>
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="n">02</span> 核心：三种"拿到动效"的方式</h2>
+  <p>很多人第一反应是"把那段提示词复制给 AI，就能做出一样的"——<b>这条路走不通</b>。原因很简单：动效真正的样子来自 <code>draw()</code> 函数里几百行数学计算（噪声、缓动曲线、确定性随机种子、线条抖动参数）。提示词只是<b>描述</b>，AI 会用自己的方式重写一遍，细节必然不同：同样的"流星雨"，AI 写出来的粒子数量、拖尾长度、随机分布都不一样。想一致，只有把<b>实现本身</b>拿走。</p>
+
+  <div class="table">
+    <div class="trow"><span>你的目的</span><span>怎么做</span><span>一致度</span></div>
+    <div class="trow"><span>要一个<b>一模一样</b>的动效，放进自己项目</span><span><code>导出 → 复制 draw 源码</code>（只拿绘制函数）或 <code>复制单文件 HTML 源码</code>（连运行时一起）</span><span class="ok">100%</span></div>
+    <div class="trow"><span>让 AI 把它<b>改造成新版本</b>（换配色逻辑/加交互）</span><span><code>参数</code> 面板底部 → 选 <b>源码版</b> → 复制移植提示词</span><span class="ok">≈100%</span></div>
+    <div class="trow"><span>只有一句想法，让 AI <b>从零写</b>一个类似风格</span><span>选 <b>描述版</b> → 复制提示词</span><span class="mid">接近</span></div>
+    <div class="trow"><span>要一段<b>能跑的骨架代码</b>让 AI 补完</span><span>选 <b>骨架版</b> → 复制提示词</span><span class="mid">中等</span></div>
+  </div>
+
+  <div class="card warn">
+    <b>一句话记住：</b>要"一样"用<b>源码</b>（导出面板里的两个复制/下载），要"灵感"用<b>提示词</b>。提示词的价值是让 AI 照着我们的思路写，而不是复刻。
+  </div>
+
+  <h3>提示词三种模式，分别在做什么</h3>
+  <div class="modes">
+    <div class="mode best">
+      <span class="tag">推荐</span>
+      <h3>源码版</h3>
+      <p>提示词里会附带本站<b>已验证的完整实现代码</b>，并明确要求 AI <b>原样移植、不要重写</b>。适合：让 AI 帮你把它接进自己的项目、改成模块、换画布尺寸。</p>
+      <ul>
+        <li>给出参数声明 + 完整 <code>draw()</code> 实现</li>
+        <li>附上运行时接口说明（U 对象）</li>
+        <li>明确禁止重新设计画面</li>
+      </ul>
+      <p class="fid">一致度：≈100%（AI 只做适配，不改逻辑）</p>
+    </div>
+    <div class="mode">
+      <h3>描述版</h3>
+      <p>只给文字描述 + 风格标签。适合：你只有个模糊想法，想让 AI 自由发挥一个<b>同风格</b>的东西。</p>
+      <ul>
+        <li>动效名称、分类、描述、风格标签</li>
+        <li>画布与配色信息</li>
+        <li>不含任何实现代码</li>
+      </ul>
+      <p class="fid">一致度：接近（细节由模型决定）</p>
+    </div>
+    <div class="mode">
+      <h3>骨架版</h3>
+      <p>给参数 + 渲染循环骨架，让 AI 填实现。适合：你要一段<b>结构规范、能直接跑</b>的代码起点。</p>
+      <ul>
+        <li>参数对象、确定性随机、循环骨架</li>
+        <li>draw 函数体留空待补</li>
+        <li>标注了实现约束（可 seek、可循环）</li>
+      </ul>
+      <p class="fid">一致度：中等（结构一致，画面靠 AI）</p>
+    </div>
+  </div>
+
+  <h2><span class="n">03</span> 源码通道怎么用</h2>
+  <h3>A. 复制 draw 源码 —— 只需要绘制逻辑</h3>
+  <p>适合你已经有自己的 Canvas 项目。点 <code>导出 → 复制 draw 源码</code>，拿到的是：</p>
+  <ul>
+    <li><code>const PARAMS = {...}</code> —— 当前所有参数的取值</li>
+    <li><code>const draw = function (ctx, t, P, U) {...}</code> —— 完整绘制函数</li>
+  </ul>
+  <p>自己项目里的调用方式：</p>
+  <div class="card"><code>ctx.save(); draw(ctx, t, PARAMS, U); ctx.restore();</code></div>
+
+  <h3>B. 复制/下载单文件 HTML —— 连运行时一起</h3>
+  <p>点 <code>导出 → 复制单文件 HTML 源码</code>（或 <b>单文件 HTML</b> 下载）。得到的是一个<b>自包含网页</b>：内联运行时 + 该动效源码 + 当前参数。<b>粘贴保存成 .html 双击就播，效果与工作台里 100% 一致</b>，无需任何依赖。想嵌到网站就放进 iframe 或直接当页面。</p>
+
+  <h3>C. React 组件 / iframe 嵌入</h3>
+  <ul>
+    <li><code>复制 React 组件</code>：粘进 React 项目即可用，无第三方依赖。</li>
+    <li><code>复制嵌入代码</code>：一行 iframe，适合快速挂到任意页面。</li>
+  </ul>
+
+  <h2><span class="n">04</span> 参数、配色与种子</h2>
+  <ul>
+    <li><b>参数面板</b>：每个动效的参数都不一样，改了立刻所见即所得。底部「恢复默认 / 随机化」可以一键重来或撞灵感。</li>
+    <li><b>配色背景</b>：6 组主题预设 + 主色/辅色/文字色/背景色自定义；背景模式有渐变光晕、径向聚焦、网格、纯色、透明（透明适合当叠加层）。</li>
+    <li><b>随机种子</b>：所有"随机"元素都由种子决定。同一个动效，种子 7 和种子 42 是两个样子；<b>但拖动时间轴不会乱跳</b>——这是可复现渲染的好处。</li>
+    <li><b>画布比例</b>：顶栏可切 16:9 / 9:16 / 1:1 等，导出会跟随。</li>
+  </ul>
+
+  <h2><span class="n">05</span> 场景序列：把多个动效串成一条片</h2>
+  <ol>
+    <li>调好一个动效 → 点 <code>+ 加入当前动效</code>，它会作为一段进入序列。</li>
+    <li>再挑下一个动效调好 → 继续加入，按需调整每段时长。</li>
+    <li>点 <code>播放全序列</code> 预览整条片；确认后到 <code>导出</code> 面板点 <b>录制裁剪好的整条序列</b>，直接导出一条 MP4。</li>
+  </ol>
+
+  <h2><span class="n">06</span> 常见问题</h2>
+  <details open>
+    <summary>为什么我把提示词复制给 AI，做出来的不一样？</summary>
+    <p>因为提示词是<b>描述</b>不是<b>代码</b>。动效的真实形态藏在几百行绘制逻辑里（粒子分布、噪声频率、缓动曲线、抖动幅度），AI 会按自己的理解重写。要一致请走源码通道：<code>导出 → 复制 draw 源码</code>。如果你是要让 AI 帮你改造（而不是复刻），用<b>源码版提示词</b>，它会带上完整实现并要求 AI 只做移植。</p>
+  </details>
+  <details>
+    <summary>导出的 GIF 有点糊/文件很大？</summary>
+    <p>到 <code>导出</code> 面板调整 GIF 宽度与帧率：宽度 640 + 12fps 是清晰度与体积的平衡点；只做表情包或小图可降到 480/8fps。追求画质请改用 MP4。</p>
+  </details>
+  <details>
+    <summary>录制 MP4 没反应 / 只有 WebM？</summary>
+    <p>MP4 录制依赖浏览器的 H.264 编码能力（Chrome / Edge / Safari 支持较好）。若浏览器不支持会自动回退 WebM。建议用最新版 Chrome 录制；WebM 可直接上传视频号或在剪映里转码。</p>
+  </details>
+  <details>
+    <summary>怎么把这个工作台分享给别人？</summary>
+    <p>直接把这个网址发给他即可，无需登录。想让他打开就看到你调好的某个动效，点 <code>分享链接</code>，链接里带着完整参数，对方打开就是同一个画面。</p>
+  </details>
+  <details>
+    <summary>这些动效可以商用吗？</summary>
+    <p>本工作台动效为原创实现，导出的源码/视频/GIF 可直接用于你的项目与商业内容。建议按平台要求自行标注素材来源。</p>
+  </details>
+
+  <h2><span class="n">07</span> 快捷键</h2>
+  <div class="keys">
+    <span class="key"><kbd>空格</kbd>播放 / 暂停</span>
+    <span class="key"><kbd>R</kbd>重播</span>
+    <span class="key"><kbd>←</kbd><kbd>→</kbd>逐帧</span>
+    <span class="key"><kbd>[</kbd><kbd>]</kbd>上 / 下一个动效</span>
+    <span class="key"><kbd>L</kbd>循环开关</span>
+    <span class="key"><kbd>/</kbd>聚焦搜索</span>
+    <span class="key"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd>切换右侧面板</span>
+    <span class="key"><kbd>B</kbd>展开 / 收起浏览</span>
+    <span class="key"><kbd>F</kbd>收藏当前动效</span>
+    <span class="key"><kbd>T</kbd>明暗主题切换</span>
+  </div>
+  <p class="tip">小技巧：选中任意动效后，直接复制浏览器地址栏链接发给朋友，对方打开就是同一个动效（<code>#e=动效id</code> 深链）。</p>
+  <p class="tip">写口播稿的看这里：舞台上方点「<b>口播稿推荐</b>」，把整段文稿粘贴进去，会按叙事节奏（开场 → 要点 → 收尾）自动推荐合适的动效卡片，点卡片直接预览、点「+ 序列」累积、或「一键生成序列」快速成片。</p>
+
+  <h2><span class="n">08</span> 版本进化</h2>
+  <div class="changelog">
+    <div class="cl-item"><b>v11</b><span>口播稿推荐：粘贴文稿自动按叙事节奏（开场·要点·收尾）推荐动效，可一键生成序列</span></div>
+    <div class="cl-item"><b>v10</b><span>「手气不错」一键出片（随机动效+参数+配色）；收藏集可选深色/浅色版式</span></div>
+    <div class="cl-item"><b>v9</b><span>深链分享 #e=、快捷键 F/T、无障碍（减少动态偏好）、Service Worker 离线可访问</span></div>
+    <div class="cl-item"><b>v8</b><span>收藏集单文件导出（全部实时动画）；30 个脚本合并打包，首屏快 8 倍</span></div>
+    <div class="cl-item"><b>v7</b><span>全库内容体检：70 个动效内容放大、修复静止/出画布 bug、退役徽章类（→ 468 个）</span></div>
+    <div class="cl-item"><b>v6</b><span>发布体验：OG 分享卡、PWA 安装、脚本 defer</span></div>
+    <div class="cl-item"><b>v5</b><span>提示词三模式 + 源码通道 + 完整图文教程（本页）</span></div>
+    <div class="cl-item"><b>v4</b><span>UI 精修：玻璃拟态质感、分类快捷条、移动端专项</span></div>
+    <div class="cl-item"><b>v3</b><span>参考 motionface.cc 新增手绘风批次（→ 474 个）</span></div>
+    <div class="cl-item"><b>v2</b><span>品牌更名「嘉Jaykou动效工作台」，独立分享链接</span></div>
+    <div class="cl-item"><b>v1</b><span>377 个动效上线，三栏 Studio，可调参、可导出 GIF/MP4/HTML/React</span></div>
+  </div>
+
+  <footer>
+    嘉Jaykou动效工作台 · 共 468 个动效 / 10 大类 · 全部可调参、可导出<br>
+    本页可单独分享或打印：<a href="index.html">回到工作台</a>
+  </footer>
+</div>
+</body>
+</html>
