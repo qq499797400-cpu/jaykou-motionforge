@@ -2,6 +2,19 @@
 
 浏览器里的动效工作台：468 个可调可导出的 Canvas 动效，全部纯静态（无构建依赖，打开 `index.html` 即用）。
 
+## 界面一览
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screenshots/hero-dark.png">
+  <img src="screenshots/hero-light.png" alt="工作台主界面 —— 实时舞台 + 参数面板 + AI 提示词">
+</picture>
+
+| 素材库 · 468 个缩略图悬停即预览 | 导出 · GIF / MP4 / HTML / React 一站式 |
+| --- | --- |
+| ![素材库](screenshots/library.png) | ![导出面板](screenshots/export.png) |
+| **口播稿推荐** · 粘贴文案按叙事节奏推荐动效 | **收藏夹** · 点亮收藏，一键导出收藏集 |
+| ![口播稿推荐](screenshots/script.png) | ![收藏夹](screenshots/favorites.png) |
+
 ## 功能
 
 - **468 个动效** / 10 大类：转场、文字、图表、粒子、几何、物理、UI、装饰、手绘、扫描巡检
