@@ -21,9 +21,11 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%23FF5A1F' stroke-width='8'/><path d='M58 22 L36 54 L50 54 L42 80 L64 46 L50 46 Z' fill='%23fff'/></svg>">
 <link rel="preload" href="assets/js/bundle.js" as="script">
-<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/app.css?v=20261016">
 </head>
 <body>
+
+<div class="bg-blobs" aria-hidden="true"><i class="bb1"></i><i class="bb2"></i><i class="bb3"></i><i class="bb4"></i></div>
 
 <div class="app">
 
@@ -60,7 +62,7 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>
         动效库
       </button>
-      <button class="ghost-btn" id="help-open">使用方式</button>
+      <button class="ghost-btn" id="help-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/><path d="M9 8h7"/></svg>使用方式</button>
       <button class="solid-btn" id="quick-export">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19h16"/></svg>
         导出
@@ -73,10 +75,10 @@
     <!-- ══════════════════════ 左侧 · 动效库 ══════════════════════ -->
     <aside class="rail rail-left">
       <nav class="tabs" id="type-tabs" aria-label="按类型筛选">
-        <button class="tab active" data-type="all"><span>全部动效</span><em id="c-all">0</em></button>
-        <button class="tab" data-type="block"><span>Block 整段</span><em id="c-block">0</em></button>
-        <button class="tab" data-type="component"><span>Component 组件</span><em id="c-comp">0</em></button>
-        <button class="tab" data-type="fav"><span>我的收藏</span><em id="c-fav">0</em></button>
+        <button class="tab active" data-type="all"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
+        <button class="tab" data-type="block"><svg viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12" rx="2.5"/><path d="M3.5 10h17"/></svg><span>Block 整段</span><em id="c-block">0</em></button>
+        <button class="tab" data-type="component"><svg viewBox="0 0 24 24"><path d="M9 9V6.5A1.5 1.5 0 0 1 10.5 5h7A1.5 1.5 0 0 1 19 6.5v7a1.5 1.5 0 0 1-1.5 1.5H15"/><rect x="5" y="9" width="10" height="10" rx="1.6"/></svg><span>Component 组件</span><em id="c-comp">0</em></button>
+        <button class="tab" data-type="fav"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>我的收藏</span><em id="c-fav">0</em></button>
       </nav>
 
       <div class="rail-scroll">
@@ -189,9 +191,9 @@
     <!-- ══════════════════════ 右侧 · 检查器 ══════════════════════ -->
     <aside class="rail rail-right">
       <nav class="tabs tabs-3" id="insp-tabs">
-        <button class="tab active" data-panel="params">参数</button>
-        <button class="tab" data-panel="theme">配色背景</button>
-        <button class="tab" data-panel="export">导出</button>
+        <button class="tab active" data-panel="params"><svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 12h3m4 0h9M4 17h11m4 0h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>参数</span></button>
+        <button class="tab" data-panel="theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.8a2.2 2.2 0 0 0 0-4.4H13a2 2 0 0 1 0-4h4.5A3.5 3.5 0 0 0 21 9.1C20.4 5.6 16.6 3 12 3Z"/><circle cx="8" cy="9" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="7" cy="13.5" r="1.1" fill="currentColor" stroke="none"/></svg><span>配色背景</span></button>
+        <button class="tab" data-panel="export"><svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg><span>导出</span></button>
       </nav>
 
       <div class="rail-scroll">

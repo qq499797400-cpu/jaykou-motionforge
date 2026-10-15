@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · 合并包 v202610120656 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效工作台 · 合并包 v202610160436 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -21408,6 +21408,51 @@ var src_default = GIFEncoder;
   }
 
   /* 浏览层顶部分类快捷筛选条 */
+  /* ══════ 板块图标（果冻玻璃风格：渐变圆角方块 + 白色线性图标） ══════ */
+  var IC = function (d) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + d + '"/></svg>';
+  };
+  var CAT_META = {
+    '文字排版':  { g: 'linear-gradient(135deg,#6FA4FF,#2F6BFF)', d: 'M5.5 7V4.5h13V7M12 4.5v15m-3.5 0h7' },
+    '数据图表':  { g: 'linear-gradient(135deg,#3EDDA0,#0EA5E9)', d: 'M4 20h16M6.5 20v-7m5.5 7V5.5m5.5 14.5v-10' },
+    '转场运镜':  { g: 'linear-gradient(135deg,#FF9A5B,#FF4D6D)', d: 'M4 6.5h16v11H4zM8 6.5l2 2.6m2-2.6 2 2.6m2-2.6 2 2.6M10 10.5v3.5l3-1.75z' },
+    '几何空间':  { g: 'linear-gradient(135deg,#A78BFA,#6D28D9)', d: 'M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3zm0 9 8-4.5M12 12 4 7.5M12 12v9' },
+    '品牌叙事':  { g: 'linear-gradient(135deg,#F472B6,#DB2777)', d: 'M7 3.5h10l4 5.5-9 11.5L3 9l4-5.5zM3 9h18M12 20.5 8.2 9 12 3.5 15.8 9 12 20.5z' },
+    '界面交互':  { g: 'linear-gradient(135deg,#38BDF8,#2563EB)', d: 'M5 4l6.5 15.5 2-6.5 6.5-2L5 4z' },
+    '粒子光影':  { g: 'linear-gradient(135deg,#FBBF24,#F59E0B)', d: 'M12 4l1.7 4.8L18.5 10.5l-4.8 1.7L12 17l-1.7-4.8L5.5 10.5l4.8-1.7L12 4zm6.5 9.5.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z' },
+    '背景材质':  { g: 'linear-gradient(135deg,#C4B5FD,#7C3AED)', d: 'M3 7.5c3-2.6 6-2.6 9 0s6 2.6 9 0M3 12.5c3-2.6 6-2.6 9 0s6 2.6 9 0M3 17.5c3-2.6 6-2.6 9 0s6 2.6 9 0' },
+    '入场与状态': { g: 'linear-gradient(135deg,#4ADE80,#159B47)', d: 'M12 3.5V13m0 0 4-4m-4 4-4-4M4.5 16.5v2a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-2' },
+    '创意生活':  { g: 'linear-gradient(135deg,#FB7185,#E11D48)', d: 'M9.5 18h5m-4 3h3M12 3a6 6 0 0 1 4 10.4c-.8.7-1 1.6-1 2.6H9c0-1-.2-1.9-1-2.6A6 6 0 0 1 12 3z' }
+  };
+  var catMeta = function (cat) {
+    return CAT_META[cat] || { g: 'linear-gradient(135deg,#94A3B8,#475569)', d: 'M12 4l8 8-8 8-8-8 8-8z' };
+  };
+  /* 导出条目图标（key 来自 data-export） */
+  var EX_META = {
+    'html':      { g: 'linear-gradient(135deg,#6FA4FF,#2F6BFF)', d: 'M9 8l-4 4 4 4m6-8 4 4-4 4' },
+    'video':     { g: 'linear-gradient(135deg,#F472B6,#DB2777)', d: 'M3.5 7.5A2 2 0 0 1 5.5 5.5h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-9zM15.5 10.5 20.5 8v8l-5-2.5' },
+    'mp4':       { g: 'linear-gradient(135deg,#A78BFA,#6D28D9)', d: 'M4 5.5h16v13H4zM4 9.5h16M9 5.5v4m6-4v4M7 15.5h.01M11 15.5h.01M15 15.5h.01' },
+    'gif':       { g: 'linear-gradient(135deg,#FF9A5B,#FF4D6D)', d: 'M4 5.5h16v13H4zm2.5 9.5 3.5-4 2.5 3 2-2.5 3 3.5M8.5 9.5h.01' },
+    'png':       { g: 'linear-gradient(135deg,#3EDDA0,#0EA5E9)', d: 'M4 5.5h16v13H4zm11 0v13M4 9h11' },
+    'copy-html': { g: 'linear-gradient(135deg,#38BDF8,#2563EB)', d: 'M9 9V6a1.5 1.5 0 0 1 1.5-1.5h8A1.5 1.5 0 0 1 20 6v8a1.5 1.5 0 0 1-1.5 1.5H15M4.5 9h8a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 12.5 20h-8A1.5 1.5 0 0 1 3 18.5v-8A1.5 1.5 0 0 1 4.5 9z' },
+    'copy-draw': { g: 'linear-gradient(135deg,#C4B5FD,#7C3AED)', d: 'M4 20l1.3-4.7L15.8 4.8l3.4 3.4L8.7 18.7 4 20zM13.5 7l3.5 3.5' },
+    'react':     { g: 'linear-gradient(135deg,#22D3EE,#0284C7)', d: 'M12 10.6a1.4 1.4 0 1 0 .01 2.81A1.4 1.4 0 0 0 12 10.6zm0-7.6c4.5 3.8 4.5 14.2 0 18M12 3c-4.5 3.8-4.5 14.2 0 18' },
+    'embed':     { g: 'linear-gradient(135deg,#94A3B8,#475569)', d: 'M8.5 8l-4 4 4 4m7-8 4 4-4 4' },
+    'prompt':    { g: 'linear-gradient(135deg,#FBBF24,#F59E0B)', d: 'M12 4l1.7 4.8 4.8 1.7-4.8 1.7L12 17l-1.7-4.8L5.5 10.5l4.8-1.7L12 4z' },
+    'share':     { g: 'linear-gradient(135deg,#F472B6,#DB2777)', d: 'M10 13.5a4.5 4.5 0 0 0 6.4 0l2.6-2.6a4.5 4.5 0 0 0-6.4-6.4l-1.3 1.3m2.2 6.7a4.5 4.5 0 0 0-6.4 0L4.5 15.1a4.5 4.5 0 0 0 6.4 6.4l1.3-1.3' },
+    'sequence':  { g: 'linear-gradient(135deg,#FB7185,#E11D48)', d: 'M4 6h10M4 11h10M4 16h6m6-6.5 5 3.5-5 3.5v-7z' },
+    'fav-html':  { g: 'linear-gradient(135deg,#FF9A5B,#FF4D6D)', d: 'M6.5 4h11v17l-5.5-3.8L6.5 21V4z' },
+    'fav-list':  { g: 'linear-gradient(135deg,#6FA4FF,#2F6BFF)', d: 'M8.5 6.5H20M8.5 12H20M8.5 17.5H20M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01' }
+  };
+  function decorateExport() {
+    $$('.export-item').forEach(function (el) {
+      var m = EX_META[el.dataset.export];
+      if (!m || el.querySelector('.ex-ic')) return;
+      el.insertAdjacentHTML('afterbegin',
+        '<i class="ex-ic" style="background:' + m.g + '">' + IC(m.d) + '</i>');
+    });
+  }
+
   function buildBrowseCats() {
     var wrap = $('#browse-cats');
     if (!wrap) return;
@@ -21418,8 +21463,9 @@ var src_default = GIFEncoder;
       var on = cat ? S.filter.cat === cat : !S.filter.cat;
       var b = document.createElement('button');
       b.type = 'button';
+      var m = cat ? catMeta(cat) : { g: 'linear-gradient(135deg,#C7D2FE,#818CF8)', d: 'M12 4l8 8-8 8-8-8 8-8z' };
       b.className = 'bc-chip' + (on ? ' active' : '');
-      b.innerHTML = '<span>' + esc(label) + '</span><i>' + n + '</i>';
+      b.innerHTML = '<i class="bc-ic" style="background:' + m.g + '">' + IC(m.d) + '</i><span>' + esc(label) + '</span><i>' + n + '</i>';
       b.addEventListener('click', function () {
         S.filter.cat = cat;
         S.filter.sub = null;
@@ -21439,8 +21485,9 @@ var src_default = GIFEncoder;
     MF.effects.forEach(function (e) { counts[e.cat] = (counts[e.cat] || 0) + 1; });
     MF.categories.forEach(function (cat) {
       var b = document.createElement('button');
+      var m = catMeta(cat);
       b.className = 'cat-item' + (S.filter.cat === cat ? ' active' : '');
-      b.innerHTML = '<span>' + esc(cat) + '</span><i>' + counts[cat] + '</i>';
+      b.innerHTML = '<i class="cat-ic" style="background:' + m.g + '">' + IC(m.d) + '</i><span>' + esc(cat) + '</span><i>' + counts[cat] + '</i>';
       b.addEventListener('click', function () {
         S.filter.cat = S.filter.cat === cat ? null : cat;
         S.filter.sub = null;   /* 切换大类时清掉细类筛选 */
@@ -22527,6 +22574,7 @@ var src_default = GIFEncoder;
   paintRanges(document);
   syncThemeInputs();
   renderPresets();
+  decorateExport();
   buildCategories();
   syncTabs();
   selectEffect(S.recent[0] && MF.byId[S.recent[0]] ? S.recent[0] : MF.effects[0].id);

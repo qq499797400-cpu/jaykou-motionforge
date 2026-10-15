@@ -888,7 +888,7 @@ input[type="range"]::-webkit-slider-runnable-track {
 .toast { border-radius: 99px; padding: 12px 20px; }
 
 /* ── 窄屏左栏底部统计防换行 ── */
-.rail-foot span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rail-foot span:not(.dot-live) { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ── 卡片首个标签：品牌色淡底 ── */
 .card .t.hot { background: color-mix(in srgb, var(--accent) 12%, transparent); }
@@ -965,10 +965,21 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 /* ═════════ 口播稿推荐 ═════════ */
-.script-card { width: min(960px, 94vw); max-height: 88vh; overflow: auto; }
-.script-card h3 { display: flex; align-items: baseline; gap: 10px; }
-.script-card h3 em { font-style: normal; font-size: 11px; letter-spacing: .12em; color: var(--dim-2); }
-.modal-sub { font-size: 13px; color: var(--dim); margin: 6px 0 14px; line-height: 1.6; }
+.script-card {
+  width: min(960px, 94vw); max-height: 88vh; overflow-y: auto;
+  padding: 28px 30px 26px;
+  border-radius: 24px; border: 1px solid var(--glass-line, var(--line-2));
+  background: var(--glass-2, var(--bg-1));
+  backdrop-filter: blur(30px) saturate(1.65);
+  -webkit-backdrop-filter: blur(30px) saturate(1.65);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.script-card h3 {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 22px; font-weight: 800; letter-spacing: -.01em; margin: 0;
+}
+.script-card h3 em { font-style: normal; font-size: 11px; letter-spacing: .14em; color: var(--dim-2); font-family: var(--mono); }
+.script-card .modal-sub { margin: 10px 0 18px; max-width: 64ch; }
 #script-input {
   width: 100%; box-sizing: border-box; resize: vertical; min-height: 120px;
   background: var(--bg-2, rgba(127,127,127,.08)); color: var(--text);
@@ -976,9 +987,9 @@ input[type="range"]::-webkit-slider-runnable-track {
   padding: 12px 14px; font: 14px/1.7 inherit;
 }
 #script-input:focus { outline: none; border-color: var(--accent); }
-.script-actions { display: flex; align-items: center; gap: 10px; margin: 12px 0 4px; flex-wrap: wrap; }
+.script-actions { display: flex; align-items: center; gap: 10px; margin: 14px 0 4px; flex-wrap: wrap; }
 .script-hint { font-size: 12px; color: var(--dim-2); }
-.script-recs { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 12px; }
+.script-recs { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 16px; }
 .rec-card {
   border: 1px solid var(--line, rgba(127,127,127,.22)); border-radius: 14px; overflow: hidden;
   background: var(--bg-2, rgba(127,127,127,.06)); cursor: pointer;
@@ -1007,3 +1018,170 @@ input[type="range"]::-webkit-slider-runnable-track {
   font-weight: 700; letter-spacing: .01em;
 }
 .primary-btn:hover { filter: brightness(1.08); }
+
+/* ═══════════════════════════════════════════════════════════
+   果冻玻璃 v3 —— 参考风格：靛紫→粉 渐变底 + 大光斑 + 浮动玻璃板
+   + 全板块彩色果冻图标（分类 / Tab / 导出条目）
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 令牌：两个主题都改为「白字 + 半透玻璃」，底色交给 body 渐变 ── */
+html[data-theme="light"] {
+  --bg: rgba(255, 255, 255, .16);
+  --bg-1: rgba(255, 255, 255, .13);
+  --bg-2: rgba(255, 255, 255, .20);
+  --bg-3: rgba(255, 255, 255, .30);
+  --line: rgba(255, 255, 255, .22);
+  --line-2: rgba(255, 255, 255, .40);
+  --text: #FFFFFF;
+  --dim: rgba(255, 255, 255, .80);
+  --dim-2: rgba(255, 255, 255, .58);
+  --glow: rgba(255, 255, 255, .35);
+  --shadow: 0 26px 60px -12px rgba(52, 22, 128, .45);
+  --glass: rgba(255, 255, 255, .13);
+  --glass-2: rgba(255, 255, 255, .16);
+  --glass-3: rgba(255, 255, 255, .26);
+  --glass-line: rgba(255, 255, 255, .36);
+  --glass-hi: rgba(255, 255, 255, .22);
+  color-scheme: dark;
+}
+html[data-theme="dark"] {
+  --bg: rgba(23, 17, 56, .55);
+  --bg-1: rgba(255, 255, 255, .06);
+  --bg-2: rgba(255, 255, 255, .10);
+  --bg-3: rgba(255, 255, 255, .17);
+  --line: rgba(255, 255, 255, .13);
+  --line-2: rgba(255, 255, 255, .27);
+  --text: #F3F0FF;
+  --dim: rgba(243, 240, 255, .74);
+  --dim-2: rgba(243, 240, 255, .5);
+  --glow: rgba(168, 128, 255, .35);
+  --shadow: 0 26px 60px -12px rgba(0, 0, 12, .6);
+  --glass: rgba(30, 22, 72, .42);
+  --glass-2: rgba(38, 28, 88, .38);
+  --glass-3: rgba(255, 255, 255, .12);
+  --glass-line: rgba(255, 255, 255, .22);
+  --glass-hi: rgba(255, 255, 255, .10);
+  color-scheme: dark;
+}
+
+/* ── 渐变底 + 四枚大光斑（参考图的大圆） ── */
+body {
+  background: linear-gradient(132deg, #6B5BFF 0%, #8D7BFF 32%, #B18CFF 56%, #D9A0FF 76%, #FFA3D1 100%) fixed;
+}
+html[data-theme="dark"] body {
+  background: linear-gradient(132deg, #150F36 0%, #221848 36%, #362068 66%, #572A82 100%) fixed;
+}
+.bg-blobs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.bg-blobs i { position: absolute; border-radius: 50%; display: block; }
+.bg-blobs .bb1 {
+  width: 620px; height: 620px; left: 18%; top: -180px;
+  background: radial-gradient(circle at 38% 38%, rgba(255,255,255,.95), rgba(126,226,255,.55) 48%, rgba(126,226,255,0) 72%);
+  filter: blur(34px);
+}
+.bg-blobs .bb2 {
+  width: 760px; height: 760px; left: -180px; bottom: -300px;
+  background: radial-gradient(circle at 40% 34%, rgba(255,255,255,.9), rgba(255,157,213,.55) 46%, rgba(255,157,213,0) 72%);
+  filter: blur(40px);
+}
+.bg-blobs .bb3 {
+  width: 470px; height: 470px; right: -140px; top: 34%;
+  background: radial-gradient(circle at 42% 40%, rgba(255,255,255,.85), rgba(255,255,255,.35) 52%, rgba(255,255,255,0) 74%);
+  filter: blur(30px);
+}
+.bg-blobs .bb4 {
+  width: 380px; height: 380px; right: 22%; bottom: -160px;
+  background: radial-gradient(circle at 40% 36%, rgba(122,224,255,.75), rgba(122,224,255,.28) 50%, rgba(122,224,255,0) 74%);
+  filter: blur(36px);
+}
+html[data-theme="dark"] .bg-blobs i { opacity: .38; }
+/* 旧环境光斑层关闭，交给 .bg-blobs */
+body::before { content: none; }
+
+/* ── 顶栏通栏玻璃 ── */
+.topbar {
+  background: var(--glass);
+  backdrop-filter: blur(26px) saturate(1.7);
+  -webkit-backdrop-filter: blur(26px) saturate(1.7);
+  border-bottom: 1px solid var(--glass-line);
+}
+
+/* ── 三栏改成「浮动玻璃板」 ── */
+.layout { padding: 14px; gap: 14px; }
+.rail, .stage-col {
+  background: var(--glass);
+  backdrop-filter: blur(30px) saturate(1.65);
+  -webkit-backdrop-filter: blur(30px) saturate(1.65);
+  border: 1px solid var(--glass-line);
+  border-radius: 26px;
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+.rail-left, .rail-right { border: 0; }
+.rail { overflow: hidden; }
+.rail-foot { background: transparent; }
+@media (max-width: 1080px) {
+  .layout { padding: 10px; gap: 10px; }
+  .rail-right { border: 1px solid var(--glass-line); border-radius: 22px; }
+}
+@media (max-width: 720px) { .layout { padding: 8px; gap: 8px; } }
+
+/* 浏览层：让渐变底透出来 */
+.browser {
+  background: color-mix(in srgb, #7C68F8 26%, transparent);
+  backdrop-filter: blur(40px) saturate(1.6);
+  -webkit-backdrop-filter: blur(40px) saturate(1.6);
+}
+html[data-theme="dark"] .browser { background: color-mix(in srgb, #1D1548 55%, transparent); }
+html[data-theme="light"] .browser { background: color-mix(in srgb, #8D7BFF 22%, transparent); }
+
+/* 弹窗底罩调亮成紫调 */
+.modal { background: rgba(48, 28, 110, .38); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+
+/* ═══════════ 彩色果冻图标（板块通用） ═══════════ */
+.cat-ic, .bc-ic, .ex-ic {
+  flex: none; display: grid; place-items: center;
+  width: 24px; height: 24px; border-radius: 8.5px;
+  color: #fff; padding: 4.5px;
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .45), inset 0 -2px 4px rgba(0, 0, 30, .18), 0 3px 8px rgba(30, 10, 90, .28);
+}
+.cat-ic svg, .bc-ic svg, .ex-ic svg { width: 100%; height: 100%; }
+.cat-ic svg path, .bc-ic svg path, .ex-ic svg path { stroke-width: 2; }
+
+/* ── 左栏：类型 Tab 带图标 ── */
+.tabs .tab { justify-content: flex-start; gap: 9px; }
+.tabs .tab > svg { width: 15px; height: 15px; flex: none; opacity: .9; }
+.tabs .tab span { flex: 1; text-align: left; }
+.tabs-3 .tab { justify-content: center; gap: 6px; }
+.tabs-3 .tab > svg { width: 14px; height: 14px; }
+.tabs-3 .tab span { flex: none; }
+
+/* ── 左栏：分类列表（图标 + 名称 + 计数） ── */
+.cat-item { gap: 9px; padding: 0 9px; height: 38px; border-radius: 12px; }
+.cat-item span { flex: 1; text-align: left; }
+.cat-item > i:last-child { font-family: var(--mono); font-size: 10.5px; }
+.cat-item.active {
+  background: color-mix(in srgb, #FF5A1F 20%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #FF5A1F 42%, transparent);
+}
+/* 浏览层分类胶囊小图标 */
+.bc-chip { gap: 7px; }
+.bc-ic { width: 19px; height: 19px; border-radius: 6.5px; padding: 3.5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 2px 6px rgba(30,10,90,.25); }
+
+/* ── 导出条目：左图标右文字 ── */
+.export-item {
+  display: grid; grid-template-columns: 30px 1fr; column-gap: 11px;
+  align-items: center; padding: 11px 12px; row-gap: 2px;
+}
+.export-item .ex-ic { width: 30px; height: 30px; border-radius: 10px; padding: 6px; grid-row: 1 / span 2; align-self: center; }
+.export-item b { grid-column: 2; }
+.export-item em { grid-column: 2; }
+.export-item .gif-opts, .export-item > .record-status { grid-column: 1 / -1; }
+.export-item:hover { transform: translateY(-1px); }
+
+/* ── 果冻主按钮（顶部导出 / 播放键沿用品牌渐变即可） ── */
+.solid-btn, .transport #play {
+  background: linear-gradient(135deg, #FF7A3D, #FF4D6D 55%, #8B5CF6);
+}
+.transport #play { background: linear-gradient(135deg, #FF7A3D, #FF4D6D 55%, #8B5CF6); }
+
+/* 品牌字标在渐变底上提亮 */
+.brand-text strong { text-shadow: 0 1px 8px rgba(30, 10, 90, .3); }
