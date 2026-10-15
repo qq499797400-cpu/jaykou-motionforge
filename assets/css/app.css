@@ -1024,25 +1024,25 @@ input[type="range"]::-webkit-slider-runnable-track {
    + 全板块彩色果冻图标（分类 / Tab / 导出条目）
    ═══════════════════════════════════════════════════════════ */
 
-/* ── 令牌：两个主题都改为「白字 + 半透玻璃」，底色交给 body 渐变 ── */
+/* ── 令牌：浅色 = 白磨砂面板 + 深紫文字（保证对比度）；深色 = 深空夜紫 + 白字 ── */
 html[data-theme="light"] {
-  --bg: rgba(255, 255, 255, .16);
-  --bg-1: rgba(255, 255, 255, .13);
-  --bg-2: rgba(255, 255, 255, .20);
-  --bg-3: rgba(255, 255, 255, .30);
-  --line: rgba(255, 255, 255, .22);
-  --line-2: rgba(255, 255, 255, .40);
-  --text: #FFFFFF;
-  --dim: rgba(255, 255, 255, .80);
-  --dim-2: rgba(255, 255, 255, .58);
-  --glow: rgba(255, 255, 255, .35);
-  --shadow: 0 26px 60px -12px rgba(52, 22, 128, .45);
-  --glass: rgba(255, 255, 255, .13);
-  --glass-2: rgba(255, 255, 255, .16);
-  --glass-3: rgba(255, 255, 255, .26);
-  --glass-line: rgba(255, 255, 255, .36);
-  --glass-hi: rgba(255, 255, 255, .22);
-  color-scheme: dark;
+  --bg: rgba(255, 255, 255, .62);
+  --bg-1: rgba(255, 255, 255, .55);
+  --bg-2: rgba(255, 255, 255, .66);
+  --bg-3: rgba(255, 255, 255, .82);
+  --line: rgba(64, 38, 130, .16);
+  --line-2: rgba(64, 38, 130, .32);
+  --text: #241543;
+  --dim: rgba(43, 26, 82, .78);
+  --dim-2: rgba(43, 26, 82, .55);
+  --glow: rgba(255, 90, 31, .18);
+  --shadow: 0 26px 60px -12px rgba(83, 42, 160, .32);
+  --glass: rgba(255, 255, 255, .60);
+  --glass-2: rgba(255, 255, 255, .70);
+  --glass-3: rgba(255, 255, 255, .84);
+  --glass-line: rgba(255, 255, 255, .78);
+  --glass-hi: rgba(255, 255, 255, .65);
+  color-scheme: light;
 }
 html[data-theme="dark"] {
   --bg: rgba(23, 17, 56, .55);
@@ -1185,3 +1185,12 @@ html[data-theme="light"] .browser { background: color-mix(in srgb, #8D7BFF 22%, 
 
 /* 品牌字标在渐变底上提亮 */
 .brand-text strong { text-shadow: 0 1px 8px rgba(30, 10, 90, .3); }
+html[data-theme="light"] .brand-text strong { text-shadow: 0 1px 10px rgba(255, 255, 255, .55); }
+
+/* 浅色主题：白玻璃面板上的可读性微调 */
+html[data-theme="light"] .rail,
+html[data-theme="light"] .stage-col {
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+/* 舞台画布保持深色观感，其上的白色文字不受主题影响 */
+html[data-theme="light"] .stage-frame { border-radius: 18px; }
