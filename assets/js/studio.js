@@ -1240,6 +1240,7 @@
     $('#lib-open').addEventListener('click', function () { openBrowser(true); });
     $('#brand-home').addEventListener('click', function (e) { e.preventDefault(); openBrowser(true); });
     $('#browser-close').addEventListener('click', closeBrowser);
+    $('#browser-back').addEventListener('click', closeBrowser);
     $('#reset-filters').addEventListener('click', function () {
       S.filter = { type: 'all', cat: null, sub: null, q: '', tag: null };
       $('#search').value = '';

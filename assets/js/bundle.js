@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · 合并包 v202610160436 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效工作台 · 合并包 v202610160652 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -22330,6 +22330,7 @@ var src_default = GIFEncoder;
     $('#lib-open').addEventListener('click', function () { openBrowser(true); });
     $('#brand-home').addEventListener('click', function (e) { e.preventDefault(); openBrowser(true); });
     $('#browser-close').addEventListener('click', closeBrowser);
+    $('#browser-back').addEventListener('click', closeBrowser);
     $('#reset-filters').addEventListener('click', function () {
       S.filter = { type: 'all', cat: null, sub: null, q: '', tag: null };
       $('#search').value = '';
