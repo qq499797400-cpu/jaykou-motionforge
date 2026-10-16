@@ -115,7 +115,9 @@ input, select, textarea { font: inherit; color: inherit; }
   flex-direction: row; align-items: center; gap: 8px;
   height: 38px; padding: 0 10px; border-radius: var(--r-sm);
   border: 1px solid var(--line); background: var(--bg-2);
+  flex: none;                       /* 不被相邻控件挤压 */
 }
+.field.compact > span { white-space: nowrap; }
 .field select, .field input[type="number"] {
   height: 34px; padding: 0 9px; border-radius: 8px;
   border: 1px solid var(--line-2); background: var(--bg-1);
@@ -176,15 +178,15 @@ input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 5px; }
   background: color-mix(in srgb, var(--bg-1) 88%, transparent);
   backdrop-filter: blur(18px); z-index: 40;
 }
-.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; flex: none; }
 .brand-mark { width: 34px; height: 34px; color: var(--text); flex: none; }
 .brand-mark circle { stroke-dasharray: 251; stroke-dashoffset: 251; animation: brandDraw 1.4s var(--ease) forwards; }
 .brand-mark path { stroke: none; fill: var(--accent); }
 @keyframes brandDraw { to { stroke-dashoffset: 0; } }
 .brand:hover .brand-mark { transform: rotate(-8deg); transition: .5s var(--ease); }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-.brand-text strong { font-size: 14.5px; font-weight: 800; letter-spacing: .06em; }
-.brand-text em { font-size: 10.5px; font-style: normal; color: var(--dim); letter-spacing: .12em; }
+.brand-text strong { font-size: 14.5px; font-weight: 800; letter-spacing: .06em; white-space: nowrap; }
+.brand-text em { font-size: 10.5px; font-style: normal; color: var(--dim); letter-spacing: .12em; white-space: nowrap; }
 
 .search {
   flex: 1; max-width: 560px; height: 40px; display: flex; align-items: center; gap: 10px;
@@ -461,7 +463,7 @@ html[data-theme="light"] #theme-toggle .i-moon { display: block; }
 .browser-head h2 { font-size: 34px; font-weight: 800; letter-spacing: -.02em; display: flex; align-items: baseline; gap: 12px; }
 .browser-head .count { font-family: var(--mono); font-size: 16px; color: var(--accent); font-weight: 700; }
 .browser-desc { font-size: 13.5px; color: var(--dim); margin-top: 6px; }
-.browser-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.browser-tools { margin-left: auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; row-gap: 8px; }
 .result-count { font-size: 12.5px; color: var(--dim); font-family: var(--mono); }
 
 /* 返回按钮：浏览层左上角，始终可见 */
@@ -556,6 +558,7 @@ html[data-theme="light"] #theme-toggle .i-moon { display: block; }
 @media (max-width: 720px) {
   .topbar { flex-wrap: wrap; height: auto; padding: 10px 12px; gap: 10px; }
   .search { order: 3; max-width: none; flex-basis: 100%; }
+  .brand-text em { display: none; }        /* 小屏只留主标，副标易挤压 */
   /* 浏览层变底部抽屉：限高才有内部滚动，sticky 才能生效 */
   .browser {
     inset: auto 0 0 0; max-height: 100dvh;
@@ -567,6 +570,12 @@ html[data-theme="light"] #theme-toggle .i-moon { display: block; }
   /* 吸顶偏移与移动端 padding 配对 */
   .browser-top { top: -14px; padding-top: 14px; border-radius: 22px 22px 0 0; }
   .field.compact > span { white-space: nowrap; }
+  .browser-tools { margin-left: 0; width: 100%; justify-content: flex-start; }
+}
+@media (max-width: 980px) {
+  /* 中等宽度：顶栏控件横向滚动兜底，避免挤压换行错位 */
+  .topbar { gap: 12px; overflow-x: auto; }
+  .brand-text em { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════

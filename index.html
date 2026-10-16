@@ -419,9 +419,11 @@
 
 <script defer src="assets/js/bundle.js?v=20261016c"></script>
 <script>
-/* Service Worker：离线可访问（仅 https/localhost 生效） */
+/* Service Worker：离线可访问（仅 https/localhost 生效）
+   ?v=3 让脚本 URL 变化，强制替换掉 v2 那版会让刷新 ERR_FAILED 的旧 SW；
+   updateViaCache:'none' 保证每次启动都绕过 HTTP 缓存检查更新 */
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
-  navigator.serviceWorker.register('sw.js').catch(function () {});
+  navigator.serviceWorker.register('sw.js?v=3', { updateViaCache: 'none' }).catch(function () {});
 }
 </script>
 </body>
