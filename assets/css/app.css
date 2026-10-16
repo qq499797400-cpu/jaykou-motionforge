@@ -696,6 +696,9 @@ html[data-theme="light"] .browser { background: rgba(255, 255, 255, .88); }
   border: 1px solid var(--glass-line);
   border-radius: var(--r-md);
 }
+/* 注：曾试过 .card{content-visibility:auto} 跳过离屏渲染 —— 实测无帧率收益
+   （滚动 33 vs 35fps，噪声内），且 contain-intrinsic-size 预估高度会让滚动条
+   跳动上千像素。瓶颈在 backdrop-filter 而非布局，故不采用。 */
 .card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--glass-line)); }
 .export-item, .preset, .scene-chip {
   background: var(--glass-2);

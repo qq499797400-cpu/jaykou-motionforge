@@ -227,11 +227,53 @@
       if (!rec) return;
       if (en.isIntersecting) {
         if (!rec.painted) { allocThumb(rec); rec.painted = true; drawPoster(rec); }
-      } else if (!S.hover[rec.hoverKey]) {
-        releaseThumb(rec);   /* 悬停动画进行中不释放 */
+        if (IS_TOUCH && touchVis.indexOf(rec) < 0) touchVis.push(rec);
+      } else {
+        var ti = touchVis.indexOf(rec);
+        if (ti >= 0) touchVis.splice(ti, 1);
+        if (!S.hover[rec.hoverKey]) releaseThumb(rec);   /* 悬停/触屏预览动画进行中不释放 */
       }
     });
+    if (IS_TOUCH) syncTouchPreview();
   }, { rootMargin: '300px' });
+
+  /* ══ 触屏预览：触屏没有 hover，卡片只会是静态海报帧。
+     让「最靠近视口中心」的至多 2 张自动播放，既让画廊活起来又控住 CPU 占用。 ══ */
+  var IS_TOUCH = !!(window.matchMedia && window.matchMedia('(hover: none)').matches);
+  var touchVis = [];
+  var touchTickPending = false;
+
+  function syncTouchPreview() {
+    if (!IS_TOUCH || REDUCE_MOTION) return;
+    var vh = window.innerHeight, cy = vh / 2;
+    var pick = [];
+    touchVis.forEach(function (rec) {
+      var b = rec.el.getBoundingClientRect();
+      if (b.bottom < 40 || b.top > vh - 40) return;
+      pick.push({ rec: rec, d: Math.abs((b.top + b.height / 2) - cy) });
+    });
+    pick.sort(function (a, b) { return a.d - b.d; });
+    pick = pick.slice(0, 2).map(function (x) { return x.rec; });
+
+    Object.keys(S.hover).forEach(function (k) {   /* 落选的停掉 */
+      var r = S.hover[k];
+      if (r && r.auto && pick.indexOf(r) < 0) delete S.hover[k];
+    });
+    pick.forEach(function (rec) {
+      if (S.hover[rec.hoverKey]) return;
+      if (!rec.painted) { allocThumb(rec); rec.painted = true; drawPoster(rec); }
+      rec.auto = true;
+      rec.last = performance.now();
+      rec.t = 0;
+      S.hover[rec.hoverKey] = rec;
+    });
+  }
+
+  function onGalleryScroll() {
+    if (!IS_TOUCH || touchTickPending) return;
+    touchTickPending = true;
+    requestAnimationFrame(function () { touchTickPending = false; if (S.browserOpen) syncTouchPreview(); });
+  }
 
   function drawPoster(rec) {
     allocThumb(rec);
@@ -292,6 +334,9 @@
       var card = document.createElement('button');
       card.className = 'card' + (S.current && S.current.id === eff.id ? ' active' : '');
       card.type = 'button';
+      card.tabIndex = -1;   /* 走 roving tabindex：整格只占 1 个 Tab 位，格子内用方向键走 */
+      card.setAttribute('aria-label',
+        eff.name + ' · ' + (eff.type === 'component' ? '组件' : '整段') + ' · ' + eff.cat + ' · ' + eff.dur + 's');
       var thumb = document.createElement('div');
       thumb.className = 'thumb';
       var cvs = document.createElement('canvas');
@@ -326,13 +371,74 @@
       card.addEventListener('click', function () {
         selectEffect(eff.id);
         closeBrowser();
+        if ($('#play')) $('#play').focus();   /* 焦点随内容走，别丢在已隐藏的浏览层里 */
       });
+      card.addEventListener('focus', function () { setRove(cardReg.indexOf(rec)); });
       card.querySelector('.fav').addEventListener('click', function (ev) {
         ev.stopPropagation();   /* 点收藏不触发卡片进入 */
         toggleFav(eff.id);
         this.classList.toggle('on', S.favorites.has(eff.id));
       });
       grid.appendChild(card);
+    });
+
+    /* roving tabindex 落点：优先停在当前动效，否则第一张 */
+    var curIdx = 0;
+    for (var j = 0; j < cardReg.length; j++) {
+      if (S.current && cardReg[j].id === S.current.id) { curIdx = j; break; }
+    }
+    if (cardReg.length) setRove(curIdx);
+  }
+
+  /* ══ 网格键盘导航：整格 1 个 Tab 位 + 方向键/Home/End 移动焦点 ══ */
+  var roveIdx = 0;
+  function setRove(idx) {
+    if (idx < 0 || idx >= cardReg.length) return;
+    if (cardReg[roveIdx]) cardReg[roveIdx].el.tabIndex = -1;
+    roveIdx = idx;
+    cardReg[idx].el.tabIndex = 0;
+  }
+  function focusCard(idx) {
+    if (idx < 0 || idx >= cardReg.length) return;
+    setRove(idx);
+    var el = cardReg[idx].el;
+    el.focus();
+    if (el.scrollIntoView) el.scrollIntoView({ block: 'nearest' });
+  }
+  /* 按几何方向找目标卡片（自动适配任意列数与响应式断点） */
+  function moveFocus(idx, dir) {
+    var cur = cardReg[idx].el.getBoundingClientRect();
+    var cx = cur.left + cur.width / 2, cy = cur.top + cur.height / 2;
+    var best = -1, bestD = Infinity;
+    for (var i = 0; i < cardReg.length; i++) {
+      if (i === idx) continue;
+      var b = cardReg[i].el.getBoundingClientRect();
+      var dx = (b.left + b.width / 2) - cx, dy = (b.top + b.height / 2) - cy;
+      var inDir =
+        dir === 'left' ? (dx < -b.width * 0.4 && Math.abs(dy) < b.height * 0.55) :
+        dir === 'right' ? (dx > b.width * 0.4 && Math.abs(dy) < b.height * 0.55) :
+        dir === 'up' ? (dy < -b.height * 0.4 && Math.abs(dx) < b.width * 0.55) :
+        (dy > b.height * 0.4 && Math.abs(dx) < b.width * 0.55);
+      if (!inDir) continue;
+      var d = dx * dx + dy * dy;
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    if (best >= 0) focusCard(best);
+  }
+  function bindGridKeys() {
+    $('#card-grid').addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k !== 'ArrowLeft' && k !== 'ArrowRight' && k !== 'ArrowUp' && k !== 'ArrowDown' && k !== 'Home' && k !== 'End') return;
+      var target = e.target.closest ? e.target.closest('.card') : null;
+      var rec = target ? cardByEl.get(target) : null;
+      if (!rec) return;
+      var idx = cardReg.indexOf(rec);
+      if (idx < 0) return;
+      e.preventDefault();
+      e.stopPropagation();   /* 别让方向键同时触发全局的逐帧步进 */
+      if (k === 'Home') focusCard(0);
+      else if (k === 'End') focusCard(cardReg.length - 1);
+      else moveFocus(idx, k === 'ArrowLeft' ? 'left' : k === 'ArrowRight' ? 'right' : k === 'ArrowUp' ? 'up' : 'down');
     });
   }
 
@@ -1064,6 +1170,7 @@
   function openBrowser(focusQ) {
     $('#browser').hidden = false;
     S.browserOpen = true;
+    syncTouchPreview();
     var canHover = window.matchMedia && window.matchMedia('(hover: hover)').matches;
     var q = $('#search');
     if (focusQ && canHover && q && !q.value) q.focus();   /* 桌面端主动打开时聚焦搜索；触屏会弹软键盘，跳过 */
@@ -1071,6 +1178,9 @@
   function closeBrowser() {
     $('#browser').hidden = true;
     S.browserOpen = false;
+    /* 触屏预览是常驻动画，收起浏览层必须停掉，否则白烧 CPU */
+    Object.keys(S.hover).forEach(function (k) { if (S.hover[k] && S.hover[k].auto) delete S.hover[k]; });
+    touchVis = [];
   }
 
   /* ══════════════════ 事件绑定 ══════════════════ */
@@ -1511,6 +1621,11 @@
   /* ══════════════════ 启动 ══════════════════ */
   document.documentElement.dataset.theme = S.theme;
   bind();
+  bindGridKeys();
+  if (IS_TOUCH) {
+    $('#browser').addEventListener('scroll', onGalleryScroll, { passive: true });
+    window.addEventListener('resize', onGalleryScroll);
+  }
   paintRanges(document);
   syncThemeInputs();
   renderPresets();
