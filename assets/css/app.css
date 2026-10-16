@@ -603,6 +603,16 @@ html[data-theme="light"] {
   --glass-hi: rgba(17, 24, 39, .045);
   --blur: 26px;
 }
+/* 浅色下 --accent 橙对白底只有 3.1:1，小号 eyebrow 文字加深一档（≈5.2:1，AA 达标） */
+html[data-theme="light"] .eyebrow { color: #C2410C; }
+/* 白字压橙渐变（导出/主按钮/激活 chip）浅色下最低 ~2.4:1，加深一档使白字 ≥4.5:1 */
+html[data-theme="light"] .solid-btn,
+html[data-theme="light"] .primary-btn {
+  background: linear-gradient(120deg, #D23705, #C93A0D 55%, #6D28D9);
+}
+html[data-theme="light"] .bc-chip.active {
+  background: linear-gradient(120deg, #D23705, color-mix(in srgb, #C2410C 55%, #6D28D9));
+}
 
 /* 环境彩色光斑：给玻璃面提供折射内容 */
 body::before {

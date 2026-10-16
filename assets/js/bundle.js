@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · 合并包 v202610161303 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效工作台 · 合并包 v202610161325 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -21292,19 +21292,39 @@ var src_default = GIFEncoder;
       : '<path d="M8 5l11 7-11 7z"/>';
   }
 
-  /* ══════════════════ 卡片预览 ══════════════════ */
+  /* ══════════════════ 卡片预览 ══════════════════
+     惰性位图策略：468 张 560×315 canvas 若在 buildCards 时全部分配，
+     位图内存高达 ~323MB（手机直接崩）。改为——
+     · 创建时只给 2×2 占位（几乎零开销，.thumb 自带深色底不露白）
+     · 进入视口前 300px 才分配真实位图并绘制海报帧
+     · 离开视口即释放位图（滚回来由 IO 重画，海报帧确定性渲染不会跳变） */
   var REDUCE_MOTION = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var THUMB_W = 560, THUMB_H = 315;
   var cardReg = [];
+  var cardByEl = new Map();   /* el → rec，IO 回调 O(1) 查找（原来 find 是 O(n)，468 卡全量回调时 O(n²)） */
+
+  function allocThumb(rec) {
+    if (rec.canvas.width >= THUMB_W) return;
+    rec.canvas.width = THUMB_W; rec.canvas.height = THUMB_H;
+  }
+  function releaseThumb(rec) {
+    if (rec.canvas.width > 2) { rec.canvas.width = 2; rec.canvas.height = 2; rec.painted = false; }
+  }
+
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (en) {
+      var rec = cardByEl.get(en.target);
+      if (!rec) return;
       if (en.isIntersecting) {
-        var rec = cardReg.find(function (r) { return r.el === en.target; });
-        if (rec && !rec.painted) { rec.painted = true; drawPoster(rec); }
+        if (!rec.painted) { allocThumb(rec); rec.painted = true; drawPoster(rec); }
+      } else if (!S.hover[rec.hoverKey]) {
+        releaseThumb(rec);   /* 悬停动画进行中不释放 */
       }
     });
-  }, { rootMargin: '200px' });
+  }, { rootMargin: '300px' });
 
   function drawPoster(rec) {
+    allocThumb(rec);
     var eff = MF.byId[rec.id];
     var cfg = baseCfg(eff.dur);
     cfg.w = rec.canvas.width; cfg.h = rec.canvas.height;
@@ -21351,6 +21371,8 @@ var src_default = GIFEncoder;
     var grid = $('#card-grid');
     grid.innerHTML = '';
     cardReg = [];
+    cardByEl.clear();
+    S.hover = {};   /* 旧卡片的悬停引用一并作废，避免动画写进已释放的位图 */
     var list = filtered();
     $('#result-count').textContent = '共 ' + list.length + ' 个动效 · ' + MF.categories.length + ' 个分类';
     $('#browse-count').textContent = list.length;
@@ -21363,7 +21385,7 @@ var src_default = GIFEncoder;
       var thumb = document.createElement('div');
       thumb.className = 'thumb';
       var cvs = document.createElement('canvas');
-      cvs.width = 560; cvs.height = 315;
+      cvs.width = 2; cvs.height = 2;   /* 占位位图，进入视口才扩到真实尺寸（省 ~320MB 常驻内存） */
       thumb.appendChild(cvs);
       thumb.insertAdjacentHTML('beforeend',
         '<span class="idx">' + (eff.type === 'component' ? 'CMP' : 'BLK') + ' ' + String(i + 1).padStart(2, '0') + '</span>' +
@@ -21379,17 +21401,18 @@ var src_default = GIFEncoder;
         }).join('') + '</div>';
       card.appendChild(info);
 
-      var rec = { el: card, id: eff.id, canvas: cvs, t: 0, painted: false };
+      var rec = { el: card, id: eff.id, canvas: cvs, t: 0, painted: false, hoverKey: eff.id + ':' + i };
       cardReg.push(rec);
+      cardByEl.set(card, rec);
       io.observe(card);
 
       card.addEventListener('mouseenter', function () {
         if (!rec.painted) { rec.painted = true; drawPoster(rec); }
         if (REDUCE_MOTION) return;   /* 减少动态偏好：卡片保持静态海报帧 */
         rec.last = performance.now();
-        S.hover[eff.id + ':' + i] = rec;
+        S.hover[rec.hoverKey] = rec;
       });
-      card.addEventListener('mouseleave', function () { delete S.hover[eff.id + ':' + i]; });
+      card.addEventListener('mouseleave', function () { delete S.hover[rec.hoverKey]; });
       card.addEventListener('click', function () {
         selectEffect(eff.id);
         closeBrowser();
@@ -21668,6 +21691,7 @@ var src_default = GIFEncoder;
         row.appendChild(head);
         var rg = document.createElement('input');
         rg.type = 'range'; rg.min = pd.min; rg.max = pd.max; rg.step = pd.step; rg.value = val;
+        rg.setAttribute('aria-label', pd.label);
         rg.addEventListener('input', function () {
           b.textContent = this.value;
           setParam(pd.k, parseFloat(this.value));
@@ -21677,6 +21701,7 @@ var src_default = GIFEncoder;
         var sw = document.createElement('button');
         sw.className = 'switch';
         sw.setAttribute('aria-pressed', String(!!val));
+        sw.setAttribute('aria-label', pd.label);
         head.appendChild(sw);
         head.style.cursor = 'pointer';
         head.addEventListener('click', function () {
@@ -21688,6 +21713,7 @@ var src_default = GIFEncoder;
       } else if (pd.type === 'select') {
         row.appendChild(head);
         var sel = document.createElement('select');
+        sel.setAttribute('aria-label', pd.label);
         pd.options.forEach(function (o) {
           var op = document.createElement('option');
           op.value = o[0]; op.textContent = o[1];
@@ -21700,6 +21726,7 @@ var src_default = GIFEncoder;
         row.appendChild(head);
         var ta = document.createElement('textarea');
         ta.value = val;
+        ta.setAttribute('aria-label', pd.label);
         ta.addEventListener('input', function () { setParam(pd.k, this.value); });
         row.appendChild(ta);
       } else if (pd.type === 'color') {
@@ -21708,6 +21735,7 @@ var src_default = GIFEncoder;
         cw.className = 'color-row';
         var ci = document.createElement('input');
         ci.type = 'color'; ci.value = val;
+        ci.setAttribute('aria-label', pd.label);
         var cc = document.createElement('code');
         cc.textContent = val;
         ci.addEventListener('input', function () { cc.textContent = this.value; setParam(pd.k, this.value); });
@@ -21718,6 +21746,7 @@ var src_default = GIFEncoder;
         var ti = document.createElement('input');
         ti.type = pd.type === 'number' ? 'number' : 'text';
         ti.value = val;
+        ti.setAttribute('aria-label', pd.label);
         ti.addEventListener('input', function () { setParam(pd.k, ti.type === 'number' ? parseFloat(this.value) : this.value); });
         row.appendChild(ti);
       }

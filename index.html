@@ -21,7 +21,7 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%23FF5A1F' stroke-width='8'/><path d='M58 22 L36 54 L50 54 L42 80 L64 46 L50 46 Z' fill='%23fff'/></svg>">
 <link rel="preload" href="assets/js/bundle.js" as="script">
-<link rel="stylesheet" href="assets/css/app.css?v=20261016d">
+<link rel="stylesheet" href="assets/css/app.css?v=20261016f">
 </head>
 <body>
 
@@ -137,15 +137,15 @@
 
       <div class="transport">
         <div class="tp-group">
-          <button class="icon-btn lg" id="play" title="播放 / 暂停（空格）">
+          <button class="icon-btn lg" id="play" title="播放 / 暂停（空格）" aria-label="播放或暂停">
             <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>
           </button>
-          <button class="icon-btn" id="restart" title="从头播放（R）">
+          <button class="icon-btn" id="restart" title="从头播放（R）" aria-label="从头播放">
             <svg viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M4.5 10a8 8 0 1 1 1 8"/></svg>
           </button>
-          <button class="icon-btn" id="prev-frame" title="后退一帧（←）"><svg viewBox="0 0 24 24"><path d="M14 6 8 12l6 6"/></svg></button>
-          <button class="icon-btn" id="next-frame" title="前进一帧（→）"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
-          <button class="icon-btn" id="loop" title="循环播放（L）" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9V7a3 3 0 0 1 3-3h10l-2.5-2.5M20 15v2a3 3 0 0 1-3 3H7l2.5 2.5M20 9 17.5 6.5M4 15l2.5 2.5"/></svg></button>
+          <button class="icon-btn" id="prev-frame" title="后退一帧（←）" aria-label="后退一帧"><svg viewBox="0 0 24 24"><path d="M14 6 8 12l6 6"/></svg></button>
+          <button class="icon-btn" id="next-frame" title="前进一帧（→）" aria-label="前进一帧"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
+          <button class="icon-btn" id="loop" title="循环播放（L）" aria-label="循环播放" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9V7a3 3 0 0 1 3-3h10l-2.5-2.5M20 15v2a3 3 0 0 1-3 3H7l2.5 2.5M20 9 17.5 6.5M4 15l2.5 2.5"/></svg></button>
         </div>
 
         <div class="tp-scrub">
@@ -231,11 +231,11 @@
         <section class="panel" id="panel-theme" hidden>
           <p class="rail-label">主题预设 <span>PRESETS</span></p>
           <div class="preset-grid" id="presets"></div>
-          <div class="color-row"><span>主色</span><input type="color" id="c-accent"><code id="v-accent"></code></div>
-          <div class="color-row"><span>辅助色</span><input type="color" id="c-accent2"><code id="v-accent2"></code></div>
-          <div class="color-row"><span>文字色</span><input type="color" id="c-ink"><code id="v-ink"></code></div>
-          <div class="color-row"><span>背景深</span><input type="color" id="c-bg1"><code id="v-bg1"></code></div>
-          <div class="color-row"><span>背景浅</span><input type="color" id="c-bg2"><code id="v-bg2"></code></div>
+          <div class="color-row"><span>主色</span><input type="color" id="c-accent" aria-label="主色"><code id="v-accent"></code></div>
+          <div class="color-row"><span>辅助色</span><input type="color" id="c-accent2" aria-label="辅助色"><code id="v-accent2"></code></div>
+          <div class="color-row"><span>文字色</span><input type="color" id="c-ink" aria-label="文字色"><code id="v-ink"></code></div>
+          <div class="color-row"><span>背景深</span><input type="color" id="c-bg1" aria-label="背景深色"><code id="v-bg1"></code></div>
+          <div class="color-row"><span>背景浅</span><input type="color" id="c-bg2" aria-label="背景浅色"><code id="v-bg2"></code></div>
           <label class="field"><span>背景模式</span>
             <select id="bg-mode">
               <option value="gradient">渐变光晕</option>
@@ -269,7 +269,7 @@
             </button>
             <div class="gif-opts">
               <span>GIF 宽度</span>
-              <select id="gif-size">
+              <select id="gif-size" aria-label="GIF 宽度">
                 <option value="360">360px（轻量）</option>
                 <option value="480">480px</option>
                 <option value="640" selected>640px（推荐）</option>
@@ -277,7 +277,7 @@
                 <option value="1080">1080px（高清，较慢）</option>
               </select>
               <span>帧率</span>
-              <select id="gif-fps">
+              <select id="gif-fps" aria-label="GIF 帧率">
                 <option value="8">8 fps</option>
                 <option value="10">10 fps</option>
                 <option value="12" selected>12 fps</option>
@@ -405,7 +405,7 @@
   <div class="modal-card script-card">
     <h3>口播稿推荐 <em>SCRIPT MATCH</em></h3>
     <p class="modal-sub">粘贴口播稿 / 分镜脚本，本地规则引擎逐句分析叙事节奏（开场 · 要点 · 收尾），按句意推荐合适的动效。全程不联网。</p>
-    <textarea id="script-input" rows="6" placeholder="例：大家好，欢迎来到我们的频道。今天这期我们聊聊 AI 如何改变剪辑流程。先看一组数据：短视频日均使用时长增长了 43%。重点来了——关键在于前三秒的留人。最后别忘了点赞关注，我们下期见。"></textarea>
+    <textarea id="script-input" rows="6" aria-label="口播稿内容" placeholder="例：大家好，欢迎来到我们的频道。今天这期我们聊聊 AI 如何改变剪辑流程。先看一组数据：短视频日均使用时长增长了 43%。重点来了——关键在于前三秒的留人。最后别忘了点赞关注，我们下期见。"></textarea>
     <div class="script-actions">
       <button class="primary-btn sm" id="script-analyze">分析并推荐</button>
       <button class="ghost-btn sm" id="script-fill" hidden>一键生成序列（前 6 个）</button>
@@ -417,7 +417,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script defer src="assets/js/bundle.js?v=20261016c"></script>
+<script defer src="assets/js/bundle.js?v=20261016e"></script>
 <script>
 /* Service Worker：离线可访问（仅 https/localhost 生效）
    ?v=3 让脚本 URL 变化，强制替换掉 v2 那版会让刷新 ERR_FAILED 的旧 SW；
