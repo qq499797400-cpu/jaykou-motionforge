@@ -263,7 +263,11 @@ html[data-theme="light"] #theme-toggle .i-moon { display: block; }
   border: 1px solid var(--line-2); color: var(--dim); white-space: nowrap;
 }
 .chip.mono { font-family: var(--mono); }
-.stage-head-actions { margin-left: auto; display: flex; gap: 8px; }
+.stage-head-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 900px) {
+  /* 窄屏：动作按钮换行铺开，绝不裁切 */
+  .stage-head-actions { margin-left: 0; width: 100%; justify-content: flex-start; }
+}
 
 .stage-frame {
   position: relative; flex: none; width: 100%; margin: 0 auto;
