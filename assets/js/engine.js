@@ -34,21 +34,41 @@
 
   /* 细类 → 大类映射：界面只展示 10 个大类，原始细类保留在 def.sub */
   MF.catGroups = {
-    '文字与排版': '文字排版', '文字特效': '文字排版', '弹幕字幕': '文字排版',
+    '文字与排版': '文字排版', '文字特效': '文字排版', '弹幕字幕': '文字排版', '遮罩与跑马灯': '文字排版',
     '入场与反馈': '入场与状态', '入场序列': '入场与状态', '退场收尾': '入场与状态',
     '加载与进度': '入场与状态', '状态与进度': '入场与状态',
     '镜头与转场': '转场运镜', '转场切换': '转场运镜', '镜头运动': '转场运镜', '形变转换': '转场运镜',
-    '数据可视化': '数据图表', '数据图表': '数据图表', '数据大屏': '数据图表', '数字计数': '数据图表',
+    '数据可视化': '数据图表', '数据图表': '数据图表', '统计图表': '数据图表', '数据大屏': '数据图表', '数字计数': '数据图表',
     'HUD 仪表': '数据图表', '对比展示': '数据图表', '时间轴': '数据图表',
     '粒子与反馈': '粒子光影', '粒子系统': '粒子光影', '光影氛围': '粒子光影', '节日庆典': '粒子光影',
     '空间与展示': '几何空间', '几何与抽象': '几何空间', '几何构成': '几何空间',
     '3D 立体': '几何空间', '物理运动': '几何空间',
     '交互与卡片': '界面交互', '界面组件': '界面交互', '办公效率': '界面交互',
-    '终端代码': '界面交互', '社交叙事': '界面交互',
+    '终端代码': '界面交互', '社交叙事': '界面交互', '操作反馈': '界面交互',
     '品牌与标识': '品牌叙事', '叙事与演示': '品牌叙事', '徽章印章': '品牌叙事',
     '涂鸦手绘': '创意生活', '拼贴手账': '创意生活', '天气氛围': '创意生活',
-    '地图轨迹': '创意生活', '音乐律动': '创意生活',
+    '地图轨迹': '创意生活', '音乐律动': '创意生活', '物理机关': '创意生活',
     '材质与纹理': '背景材质', '背景循环': '背景材质'
+  };
+
+  /* 细类规范化：早期分类有两批毛病 ——
+     ① 细类与它所属的大类同名（数据图表 / 创意生活 / 界面交互），点开二级会看到"自己"
+     ② 语义重复的细类被拆成两个（状态与进度 vs 加载与进度、入场与反馈 vs 入场序列、
+        粒子与反馈 vs 粒子系统、交互与卡片 vs 界面组件、数据可视化 vs 数据图表）
+     这里做一次归一并改名，让二级真正可用。改映射即可，不动 24 个效果文件。 */
+  MF.subAlias = {
+    /* ① 同名歧义 → 起一个说得清内容的名字 */
+    '数据图表': '统计图表',     /* 柱状/折线/饼图/K 线… */
+    '创意生活': '物理机关',     /* 万花筒/DNA/太阳系/牛顿摆/代码雨… */
+    '界面交互': '操作反馈',     /* 点赞爆裂/加购飞入/文件上传/键盘打字… */
+    '文字与排版': '遮罩与跑马灯', /* 遮罩文字/字符散落/回声跑马灯… */
+    /* ② 语义重复 → 并入主细类 */
+    '数据可视化': '统计图表',
+    '状态与进度': '加载与进度',
+    '入场与反馈': '入场序列',
+    '粒子与反馈': '粒子系统',
+    '交互与卡片': '界面组件',
+    '镜头与转场': '镜头运动'
   };
 
   /* ------------------------------ 注册 ------------------------------ */
@@ -101,8 +121,8 @@
     def.tags = def.tags || [];
     def.params = def.params || [];
     def.desc = def.desc || '';
-    def.sub = def.cat;                       /* 保留原始细类，供搜索与展示 */
-    def.cat = MF.catGroups[def.cat] || def.cat;
+    def.sub = MF.subAlias[def.cat] || def.cat;   /* 先规范化细类，供搜索、二级筛选与展示 */
+    def.cat = MF.catGroups[def.sub] || MF.catGroups[def.cat] || def.cat;
     MF.effects.push(def);
     MF.byId[def.id] = def;
     if (dev_cache_cats.indexOf(def.cat) === -1) dev_cache_cats.push(def.cat);
@@ -222,7 +242,7 @@
     var effect = MF.byId[scene.id];
     var p = MF.resolveParams(effect, scene.params, settings);
     var R = MF.ratios[settings.ratio] || MF.ratios['16:9'];
-    var title = effect.name + ' · 嘉Jaykou动效工作台';
+    var title = effect.name + ' · 嘉Jaykou动效库';
     var cfg = {
       w: R.w, h: R.h, duration: scene.duration || effect.dur,
       accent: settings.accent, accent2: settings.accent2, ink: settings.ink,
@@ -284,7 +304,7 @@
       bg1: settings.bg1, bg2: settings.bg2, bgMode: settings.bgMode, seed: settings.seed
     };
     return [
-      '/* ' + effect.name + ' · 由 嘉Jaykou动效工作台 生成 */',
+      '/* ' + effect.name + ' · 由 嘉Jaykou动效库 生成 */',
       "import { useEffect, useRef } from 'react';",
       '',
       window.MF_RUNTIME_SRC,
@@ -375,7 +395,7 @@
         draw: eff.draw.toString()
       });
     });
-    var title = '我的收藏集 · ' + items.length + ' 个动效 · 嘉Jaykou动效工作台';
+    var title = '我的收藏集 · ' + items.length + ' 个动效 · 嘉Jaykou动效库';
     return [
       '<!doctype html>',
       '<html lang="zh-CN"><head><meta charset="utf-8">',
@@ -397,7 +417,7 @@
       '  .empty{max-width:560px;margin:80px auto;text-align:center;color:' + C.sub + '}',
       '  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:0 16px}header{padding:24px 16px 6px}}',
       '</style></head><body>',
-      '<header><h1>我的收藏集<span class="dot"> .</span></h1><em>' + items.length + ' 个动效 · 实时渲染 · 嘉Jaykou动效工作台出品</em></header>',
+      '<header><h1>我的收藏集<span class="dot"> .</span></h1><em>' + items.length + ' 个动效 · 实时渲染 · 嘉Jaykou动效库出品</em></header>',
       items.length ? '<div class="grid" id="grid"></div>' : '<p class="empty">收藏集为空</p>',
       '<script>' + window.MF_RUNTIME_SRC + '<\/script>',
       '<script>',

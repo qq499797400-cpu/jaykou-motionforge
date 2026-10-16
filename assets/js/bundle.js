@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · 合并包 v202610161617 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效库 · 合并包 v202610162026 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -289,21 +289,41 @@ window.MF_RUNTIME_SRC = String.raw`
 
   /* 细类 → 大类映射：界面只展示 10 个大类，原始细类保留在 def.sub */
   MF.catGroups = {
-    '文字与排版': '文字排版', '文字特效': '文字排版', '弹幕字幕': '文字排版',
+    '文字与排版': '文字排版', '文字特效': '文字排版', '弹幕字幕': '文字排版', '遮罩与跑马灯': '文字排版',
     '入场与反馈': '入场与状态', '入场序列': '入场与状态', '退场收尾': '入场与状态',
     '加载与进度': '入场与状态', '状态与进度': '入场与状态',
     '镜头与转场': '转场运镜', '转场切换': '转场运镜', '镜头运动': '转场运镜', '形变转换': '转场运镜',
-    '数据可视化': '数据图表', '数据图表': '数据图表', '数据大屏': '数据图表', '数字计数': '数据图表',
+    '数据可视化': '数据图表', '数据图表': '数据图表', '统计图表': '数据图表', '数据大屏': '数据图表', '数字计数': '数据图表',
     'HUD 仪表': '数据图表', '对比展示': '数据图表', '时间轴': '数据图表',
     '粒子与反馈': '粒子光影', '粒子系统': '粒子光影', '光影氛围': '粒子光影', '节日庆典': '粒子光影',
     '空间与展示': '几何空间', '几何与抽象': '几何空间', '几何构成': '几何空间',
     '3D 立体': '几何空间', '物理运动': '几何空间',
     '交互与卡片': '界面交互', '界面组件': '界面交互', '办公效率': '界面交互',
-    '终端代码': '界面交互', '社交叙事': '界面交互',
+    '终端代码': '界面交互', '社交叙事': '界面交互', '操作反馈': '界面交互',
     '品牌与标识': '品牌叙事', '叙事与演示': '品牌叙事', '徽章印章': '品牌叙事',
     '涂鸦手绘': '创意生活', '拼贴手账': '创意生活', '天气氛围': '创意生活',
-    '地图轨迹': '创意生活', '音乐律动': '创意生活',
+    '地图轨迹': '创意生活', '音乐律动': '创意生活', '物理机关': '创意生活',
     '材质与纹理': '背景材质', '背景循环': '背景材质'
+  };
+
+  /* 细类规范化：早期分类有两批毛病 ——
+     ① 细类与它所属的大类同名（数据图表 / 创意生活 / 界面交互），点开二级会看到"自己"
+     ② 语义重复的细类被拆成两个（状态与进度 vs 加载与进度、入场与反馈 vs 入场序列、
+        粒子与反馈 vs 粒子系统、交互与卡片 vs 界面组件、数据可视化 vs 数据图表）
+     这里做一次归一并改名，让二级真正可用。改映射即可，不动 24 个效果文件。 */
+  MF.subAlias = {
+    /* ① 同名歧义 → 起一个说得清内容的名字 */
+    '数据图表': '统计图表',     /* 柱状/折线/饼图/K 线… */
+    '创意生活': '物理机关',     /* 万花筒/DNA/太阳系/牛顿摆/代码雨… */
+    '界面交互': '操作反馈',     /* 点赞爆裂/加购飞入/文件上传/键盘打字… */
+    '文字与排版': '遮罩与跑马灯', /* 遮罩文字/字符散落/回声跑马灯… */
+    /* ② 语义重复 → 并入主细类 */
+    '数据可视化': '统计图表',
+    '状态与进度': '加载与进度',
+    '入场与反馈': '入场序列',
+    '粒子与反馈': '粒子系统',
+    '交互与卡片': '界面组件',
+    '镜头与转场': '镜头运动'
   };
 
   /* ------------------------------ 注册 ------------------------------ */
@@ -356,8 +376,8 @@ window.MF_RUNTIME_SRC = String.raw`
     def.tags = def.tags || [];
     def.params = def.params || [];
     def.desc = def.desc || '';
-    def.sub = def.cat;                       /* 保留原始细类，供搜索与展示 */
-    def.cat = MF.catGroups[def.cat] || def.cat;
+    def.sub = MF.subAlias[def.cat] || def.cat;   /* 先规范化细类，供搜索、二级筛选与展示 */
+    def.cat = MF.catGroups[def.sub] || MF.catGroups[def.cat] || def.cat;
     MF.effects.push(def);
     MF.byId[def.id] = def;
     if (dev_cache_cats.indexOf(def.cat) === -1) dev_cache_cats.push(def.cat);
@@ -477,7 +497,7 @@ window.MF_RUNTIME_SRC = String.raw`
     var effect = MF.byId[scene.id];
     var p = MF.resolveParams(effect, scene.params, settings);
     var R = MF.ratios[settings.ratio] || MF.ratios['16:9'];
-    var title = effect.name + ' · 嘉Jaykou动效工作台';
+    var title = effect.name + ' · 嘉Jaykou动效库';
     var cfg = {
       w: R.w, h: R.h, duration: scene.duration || effect.dur,
       accent: settings.accent, accent2: settings.accent2, ink: settings.ink,
@@ -539,7 +559,7 @@ window.MF_RUNTIME_SRC = String.raw`
       bg1: settings.bg1, bg2: settings.bg2, bgMode: settings.bgMode, seed: settings.seed
     };
     return [
-      '/* ' + effect.name + ' · 由 嘉Jaykou动效工作台 生成 */',
+      '/* ' + effect.name + ' · 由 嘉Jaykou动效库 生成 */',
       "import { useEffect, useRef } from 'react';",
       '',
       window.MF_RUNTIME_SRC,
@@ -630,7 +650,7 @@ window.MF_RUNTIME_SRC = String.raw`
         draw: eff.draw.toString()
       });
     });
-    var title = '我的收藏集 · ' + items.length + ' 个动效 · 嘉Jaykou动效工作台';
+    var title = '我的收藏集 · ' + items.length + ' 个动效 · 嘉Jaykou动效库';
     return [
       '<!doctype html>',
       '<html lang="zh-CN"><head><meta charset="utf-8">',
@@ -652,7 +672,7 @@ window.MF_RUNTIME_SRC = String.raw`
       '  .empty{max-width:560px;margin:80px auto;text-align:center;color:' + C.sub + '}',
       '  @media(max-width:560px){.grid{grid-template-columns:1fr;padding:0 16px}header{padding:24px 16px 6px}}',
       '</style></head><body>',
-      '<header><h1>我的收藏集<span class="dot"> .</span></h1><em>' + items.length + ' 个动效 · 实时渲染 · 嘉Jaykou动效工作台出品</em></header>',
+      '<header><h1>我的收藏集<span class="dot"> .</span></h1><em>' + items.length + ' 个动效 · 实时渲染 · 嘉Jaykou动效库出品</em></header>',
       items.length ? '<div class="grid" id="grid"></div>' : '<p class="empty">收藏集为空</p>',
       '<script>' + window.MF_RUNTIME_SRC + '<\/script>',
       '<script>',
@@ -4305,7 +4325,7 @@ window.MF_RUNTIME_SRC = String.raw`
       { id: 'enter-chip-slide', name: '标签滑入', tags: ['标签', '横向'], desc: '胶囊从左侧滑入，适合多个标签依次登场的场景。', cfg: { shape: 'chip', text: '限时特惠', dir: 'left', glow: 0.5 } },
       { id: 'enter-chip-elastic', name: '标签弹跳', tags: ['标签', '弹性'], desc: '胶囊带弹性落地，适合促销标签与徽章。', cfg: { shape: 'chip', text: 'HOT', dir: 'down', curve: 'outBounce', glow: 0.7 } },
       { id: 'enter-chip-focus', name: '标签聚焦', tags: ['标签', '虚化'], desc: '胶囊从虚化中清晰，适合需要质感的品牌露出。', cfg: { shape: 'chip', text: 'PREMIUM', dir: 'blur', blurAmt: 24, glow: 0.8 } },
-      { id: 'enter-title-up', name: '标题组升起', tags: ['标题', '开场'], desc: '标题、下划线、副标题依次升起，是标准的开场版式。', cfg: { shape: 'title', text: '让画面动起来', sub: '嘉Jaykou动效工作台', dir: 'up', size: 229 } },
+      { id: 'enter-title-up', name: '标题组升起', tags: ['标题', '开场'], desc: '标题、下划线、副标题依次升起，是标准的开场版式。', cfg: { shape: 'title', text: '让画面动起来', sub: '嘉Jaykou动效库', dir: 'up', size: 229 } },
       { id: 'enter-title-blur', name: '标题组聚焦', tags: ['标题', '虚化'], desc: '标题从模糊中显影，副标题随后淡入，情绪更沉稳。', cfg: { shape: 'title', text: 'Design in Motion', sub: '视觉表达 · 一次说清', dir: 'blur', blurAmt: 26, size: 211 } },
       { id: 'enter-title-scale', name: '标题组缩放', tags: ['标题', '聚焦'], desc: '标题由小放大到正位，强调感强，适合结论页。', cfg: { shape: 'title', text: '增长 237%', sub: '同比去年 · 全渠道', dir: 'scale', size: 118 } },
       { id: 'enter-title-flip', name: '标题组翻转', tags: ['标题', '立体'], desc: '标题翻面展开，带轻微透视，适合新品发布。', cfg: { shape: 'title', text: 'NEW ARRIVAL', sub: '2026 秋冬系列', dir: 'flip', size: 100 } },
@@ -21087,6 +21107,397 @@ var src_default = GIFEncoder;
   };
 })();
 
+/* ════════ assets/js/styles-kit.js ════════ */
+/* ════════════════════════════════════════════════════════════════════
+   嘉Jaykou动效库 · 视频风格系统（VIDEO STYLE KIT）
+   ────────────────────────────────────────────────────────────────────
+   数据来源：codex 剪辑工作台「认知翻倍视频剪辑工作台」的两套正式视觉合同
+     · docs/styles/obsidian-glass-cognition-system.md （方法论 V4 · 默认）
+     · docs/styles/black-gold-business-dossier.md    （方法论 V3 · 显式调用）
+   两套风格不得混用，配色/字体/圆角/禁用项严格按合同执行。
+
+   本文件是「预览 == 导出」的唯一真源：
+     CSS 与模板 HTML 都由这里生成，页面预览、下载 HTML、导出 PNG 共用同一份。
+   ════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var MF = window.MF || (window.MF = {});
+
+  /* ══════════════════ 固定案例内容（两套风格共用，便于对比风格差异） ══════════════════ */
+  var CASE = {
+    no: '第 12 期',
+    dossier: 'DOSSIER 012',
+    section: '系统诊断 / 03',
+    mark: '58%',
+    eyebrow: '低回报系统已识别',
+    /* ⚠️ <br/> 必须自闭合：导出 PNG 走 SVG foreignObject（按 XML 解析），
+       HTML 里写成 <br> 会让整个 SVG 解析失败，导出直接报错 */
+    title: '你不是不努力<br/>是<em class="em-alt">系统</em>没有<em class="em-key">复利</em>',
+    sub: '真正拉开差距的，从来不是重复用力。<br/><b>找到反馈回路，让每一次行动成为下一次行动的杠杆。</b>',
+    panelLabel: 'SYSTEM RETURN INDEX',
+    score: '8.7',
+    delta: '↑ 36.4%',
+    steps: ['01 识别', '02 重构', '03 复利'],
+    activeStep: 1,
+    caption: '大多数人不是<em class="em-key">不努力</em>，而是把努力投进了<em class="em-bad">低回报系统</em>',
+    author: '作者 · 嘉Jaykou',
+    wechat: '微信 JAYKOU411',
+    coverBrand: 'JAYKOU COGNITION',
+    coverCrit: '别再误判',
+    coverLabel: '复利习惯',
+    coverSub: '先修系统，再谈努力'
+  };
+
+  /* ══════════════════ 两套风格（合同字段全量录入） ══════════════════ */
+  var STYLES = [
+    {
+      id: 'obsidian-glass',
+      skin: 'glass',
+      name: '黑曜玻璃认知系统',
+      en: 'OBSIDIAN GLASS COGNITION SYSTEM',
+      ver: '方法论 V4',
+      badge: '账号默认',
+      tagline: '深色 Apple UI 玻璃材质 · 商业诊断的锋利感',
+      desc: '为无真人出镜的认知 / 商业 / 自我提升视频而做。它不是普通科技风，而是玻璃材质、诊断结构与认知拆解三件事叠在一起。',
+      vibe: ['这个人很懂商业', '这句话戳醒我了', '这个方法我得收藏', '这个观点很锋利'],
+      tokens: [
+        { n: '背景黑', v: '#020305', d: '视频主背景' },
+        { n: '深层黑', v: '#07090d', d: '渐变中段' },
+        { n: '面板黑', v: '#0b1117', d: '玻璃面板底' },
+        { n: '主文字', v: '#fffaf0', d: '大字观点 / 标题' },
+        { n: '辅助文字', v: '#b5bfca', d: '副标题 / 标签' },
+        { n: '荧光绿', v: '#39ff88', d: '方法 / 复利 / 正确路径' },
+        { n: '科技紫', v: '#9b6cff', d: '系统 / 结构 / 认知层' },
+        { n: '科技蓝', v: '#56e8ff', d: '信号线 / 进度' },
+        { n: '批判红', v: '#ff3f4d', d: '失效 / 低回报 / 警告' }
+      ],
+      font: 'HarmonyOS Sans SC → MiSans → Microsoft YaHei UI → PingFang SC',
+      panel: '28–32px 大圆角 · 1px 半透明白描边 · 内侧上沿高光 · blur(22px) saturate(1.25)',
+      semantics: [
+        ['荧光绿', '努力 · 勤奋 · 反馈 · 复利 · 方法 · 正确路径 · 激活状态'],
+        ['科技紫', '系统 · 结构 · 认知 · 节点 · 框架 · 诊断层'],
+        ['科技蓝', '信号线 · 进度节点 · 数据流'],
+        ['批判红', '系统失效 · 低回报 · 懒惰 · 错误归因 · 警告']
+      ],
+      rules: [
+        '以文字为主体时主观点必须居中，保留干净负空间',
+        '所有面板统一深色玻璃材质，不使用直角硬框',
+        '主文字背后不放整块半透明面板、雾状光晕或扫描线压灰文字',
+        '字幕固定在底部安全区居中，支持关键词高亮，不压主画面',
+        '每 2–4 秒信息变化，每 5–7 秒一个非字幕视觉亮点，每 12–18 秒强命中'
+      ],
+      banned: ['直角硬框', '粗描边', '普通 PPT 卡片', '灰蒙蒙低亮度彩色字', '大面积廉价霓虹发光'],
+      spec: [
+        ['视频比例', '16:9'],
+        ['预览 / 成片', '1920×1080 → 3840×2160'],
+        ['封面', '3:4 · 1536×2048'],
+        ['帧率 / 输出', '30fps · H.264 yuv420p BT.709 · AAC 48kHz']
+      ]
+    },
+    {
+      id: 'black-gold',
+      skin: 'gold',
+      name: '黑金商业档案',
+      en: 'BLACK GOLD BUSINESS DOSSIER',
+      ver: '方法论 V3',
+      badge: '显式调用',
+      tagline: '高级咨询报告感 · 档案级厚度与判断力',
+      desc: '深黑石墨底 + 暖金，骨白中文大字像一句商业判断。要调用它必须明确说「用黑金风 / 黑金商业档案」，且不能混回黑曜玻璃的荧光绿与科技紫。',
+      vibe: ['像审计报告', '像咨询方案', '像一份被盖章的结论', '克制、有厚度'],
+      tokens: [
+        { n: '石墨黑', v: '#020305', d: '视频主背景' },
+        { n: '档案深', v: '#11100d', d: '渐变中段' },
+        { n: '卡片黑', v: '#191713', d: '档案卡面' },
+        { n: '骨白', v: '#f4eddf', d: '大字观点 / 标题' },
+        { n: '钛灰', v: '#aaa193', d: '副标题 / 标签' },
+        { n: '香槟金', v: '#d7b36a', d: '杠杆 / 方法 / 复利' },
+        { n: '批判红', v: '#ff3f4d', d: '仅批判与错误路径' }
+      ],
+      font: 'Microsoft YaHei UI → PingFang SC → HarmonyOS Sans SC',
+      panel: '22px 圆角 · 1px 金描边（32% 透明度）· 深黑到暗金块面渐变 · 不用模糊玻璃',
+      semantics: [
+        ['香槟金', '杠杆 · 方法 · 复利 · 被选中的正确路径'],
+        ['骨白', '大字观点 · 商业判断 · 主标题'],
+        ['钛灰', '副标题 · 注释 · 报告编号'],
+        ['批判红', '仅批判、警告、错误路径（常规强调不用红）']
+      ],
+      rules: [
+        '文字重叠绝对禁止：卡片压字、字幕压主画面一律硬失败',
+        '大字观点约占画面 60%，卡片 / 数据结构约占 40%，不做 PPT 信息块',
+        '转场只用元素接力、轻微推拉、档案页内翻动、细线扫过边缘',
+        '封面背景只用深黑到暗金的线性渐变，不放圆形光晕或雾化光效',
+        '每 5–7 秒仍有非字幕视觉机制，后半段不能退化成字幕 + 普通卡片'
+      ],
+      banned: ['雾蒙蒙玻璃风', '全屏网格背景', '霓虹蓝紫科技风', '发光字体做主效果', 'SaaS 仪表盘'],
+      spec: [
+        ['视频比例', '16:9'],
+        ['预览 / 成片', '1920×1080 → 3840×2160'],
+        ['封面', '3:4 · 1536×2048'],
+        ['帧率 / 输出', '30fps · H.264 CRF16 BT.709 · AAC 48kHz']
+      ]
+    }
+  ];
+
+  /* ══════════════════ 模板 CSS（预览 / 导出 / 下载三处共用） ══════════════════ */
+  var CSS = [
+    /* —— 复位（用 :where() 保持零特异性，不覆盖下方类样式；保证页面内预览与导出一致） —— */
+    '.vsk :where(*),.vsk :where(*::before),.vsk :where(*::after){box-sizing:border-box}',
+    '.vsk :where(h1,p,ul,li,figure,figcaption){margin:0;padding:0}',
+    '.vsk :where(em,i){font-style:normal}',
+
+    /* —— 画布与底 —— */
+    '.vsk{position:relative;overflow:hidden;display:grid;font-family:"HarmonyOS Sans SC","MiSans","Microsoft YaHei UI","PingFang SC","Noto Sans SC",sans-serif;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}',
+    '.vsk--169{width:1920px;height:1080px;padding:54px 96px 58px;grid-template-rows:auto 1fr auto;gap:44px}',
+    '.vsk--34{width:1536px;height:2048px;padding:104px 118px 92px;grid-template-rows:auto 1fr auto;gap:40px}',
+    '.vsk-gridbg{position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:56px 56px;-webkit-mask-image:linear-gradient(to bottom,#000,transparent 88%);mask-image:linear-gradient(to bottom,#000,transparent 88%)}',
+    '.vsk--glass{--vsk-accent:#39ff88;--vsk-alt:#9b6cff;--vsk-ink:#fffaf0;--vsk-mut:#b5bfca;color:#fffaf0;background:radial-gradient(circle at 72% 28%,rgba(155,108,255,.12),transparent 28%),radial-gradient(circle at 24% 76%,rgba(57,255,136,.08),transparent 30%),linear-gradient(140deg,#020305,#07090d 56%,#030609)}',
+    '.vsk--gold{--vsk-accent:#d7b36a;--vsk-alt:#d7b36a;--vsk-ink:#f4eddf;--vsk-mut:#aaa193;color:#f4eddf;background:linear-gradient(135deg,#070604,#11100d 55%,#080704)}',
+    '.vsk--gold .vsk-gridbg{display:none}',
+
+    /* —— 顶部安全区 —— */
+    '.vsk-top{position:relative;z-index:2;display:flex;align-items:center;gap:20px;font-size:17px;letter-spacing:.08em;color:var(--vsk-mut)}',
+    '.vsk-top .vsk-author{display:inline-flex;align-items:center;color:var(--vsk-ink);font-weight:800}',
+    '.vsk-top .vsk-dot{width:9px;height:9px;margin-right:11px;border-radius:50%;background:var(--vsk-accent);box-shadow:0 0 18px var(--vsk-accent);flex:none}',
+    '.vsk--gold .vsk-top .vsk-dot{box-shadow:none}',
+    '.vsk-top .vsk-wx{margin-left:14px;color:var(--vsk-mut);font-weight:400;letter-spacing:.06em}',
+    '.vsk-track{position:relative;flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,.09);min-width:180px}',
+    '.vsk-track i{position:absolute;left:0;top:0;bottom:0;border-radius:inherit;background:linear-gradient(90deg,var(--vsk-accent),var(--vsk-alt));box-shadow:0 0 14px rgba(86,232,255,.5)}',
+    '.vsk-track b{position:absolute;top:50%;width:11px;height:11px;border:2px solid var(--vsk-alt);border-radius:50%;background:#020305;transform:translate(-50%,-50%);box-shadow:0 0 16px var(--vsk-alt)}',
+    '.vsk--gold .vsk-track i{box-shadow:none}',
+    '.vsk--gold .vsk-track b{display:none}',
+
+    /* —— 主体 —— */
+    '.vsk-main{position:relative;z-index:2;display:grid;grid-template-columns:1.28fr .84fr;align-items:center;gap:78px;min-height:0}',
+    '.vsk-eyebrow{display:inline-flex;align-items:center;gap:11px;padding:12px 19px;border-radius:999px;border:1px solid rgba(255,63,77,.28);background:rgba(255,63,77,.07);color:#ff8b94;font-size:17px;font-weight:800;letter-spacing:.14em;white-space:nowrap}',
+    '.vsk-eyebrow i{width:7px;height:7px;border-radius:50%;background:#ff3f4d;box-shadow:0 0 12px #ff3f4d;flex:none}',
+    '.vsk--gold .vsk-eyebrow{border-color:rgba(215,179,106,.42);background:rgba(215,179,106,.08);color:#d7b36a}',
+    '.vsk--gold .vsk-eyebrow i{background:#d7b36a;box-shadow:none}',
+    '.vsk-title{margin:34px 0 26px;font-size:88px;font-weight:900;line-height:1.1;letter-spacing:-4px}',
+    '.vsk-title .em-key{font-style:normal;color:var(--vsk-accent);text-shadow:0 0 30px rgba(57,255,136,.18)}',
+    '.vsk-title .em-alt{font-style:normal;color:var(--vsk-alt);text-shadow:0 0 30px rgba(155,108,255,.2)}',
+    '.vsk--gold .vsk-title .em-key,.vsk--gold .vsk-title .em-alt{text-shadow:none}',
+    '.vsk-sub{margin:0;max-width:900px;font-size:26px;line-height:1.72;color:var(--vsk-mut)}',
+    '.vsk-sub b{color:var(--vsk-ink)}',
+
+    /* —— 右侧面板 —— */
+    '.vsk-panel{position:relative;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:42px;border-radius:32px;overflow:hidden;border:1px solid rgba(255,255,255,.15);background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.035) 44%,rgba(4,6,10,.76)),rgba(4,6,10,.76);box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 35px 90px rgba(0,0,0,.45);backdrop-filter:blur(22px) saturate(1.25);-webkit-backdrop-filter:blur(22px) saturate(1.25)}',
+    '.vsk-panel::after{content:"";position:absolute;top:-80px;right:-70px;width:190px;height:190px;border-radius:50%;background:var(--vsk-alt);filter:blur(80px);opacity:.22}',
+    '.vsk--gold .vsk-panel{border-radius:22px;border-color:rgba(215,179,106,.32);background:linear-gradient(145deg,#191713,#0b0a08);box-shadow:inset 0 1px rgba(255,255,255,.08),0 35px 90px rgba(0,0,0,.5);backdrop-filter:none;-webkit-backdrop-filter:none}',
+    '.vsk--gold .vsk-panel::after{display:none}',
+    '.vsk-label{position:relative;z-index:1;font-size:16px;letter-spacing:.18em;color:var(--vsk-mut)}',
+    '.vsk-score{position:relative;z-index:1;display:flex;align-items:flex-end;gap:16px}',
+    '.vsk-score b{font-size:106px;font-weight:900;line-height:.9}',
+    '.vsk-score span{color:var(--vsk-accent);font-size:22px;font-weight:800}',
+    '.vsk-chart{position:relative;z-index:1;height:104px;margin-top:6px;border-bottom:1px solid rgba(255,255,255,.1);background:repeating-linear-gradient(to bottom,transparent 0 34px,rgba(255,255,255,.045) 35px)}',
+    '.vsk-chart svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}',
+    '.vsk-steps{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}',
+    '.vsk-steps div{padding:14px 8px;border-radius:14px;background:rgba(255,255,255,.035);color:var(--vsk-mut);font-size:15px;text-align:center;white-space:nowrap}',
+    '.vsk-steps .on{color:var(--vsk-accent);background:rgba(57,255,136,.08);border:1px solid rgba(57,255,136,.22)}',
+    '.vsk--gold .vsk-steps div{border-radius:10px;background:rgba(215,179,106,.05)}',
+    '.vsk--gold .vsk-steps .on{color:var(--vsk-accent);background:rgba(215,179,106,.07);border-color:rgba(215,179,106,.4)}',
+    '.vsk-stamp{display:none}',
+    '.vsk--gold .vsk-stamp{position:relative;z-index:1;display:inline-flex;align-self:flex-start;padding:8px 16px;border:3px solid #ff3f4d;color:#ff3f4d;font-size:22px;font-weight:900;letter-spacing:.06em;transform:rotate(-4deg)}',
+
+    /* —— 底部字幕安全区 —— */
+    '.vsk-caption{position:relative;z-index:2;justify-self:center;align-self:end;max-width:1520px;padding:16px 30px;border-radius:18px;border:1px solid rgba(255,255,255,.13);background:rgba(8,12,16,.78);box-shadow:inset 0 1px rgba(255,255,255,.1),0 12px 38px rgba(0,0,0,.35);font-size:25px;text-align:center}',
+    '.vsk-caption .em-key{font-style:normal;color:var(--vsk-accent);font-weight:800}',
+    '.vsk-caption .em-bad{font-style:normal;color:#ff3f4d;font-weight:800}',
+    '.vsk--gold .vsk-caption{border-color:rgba(215,179,106,.25);background:rgba(10,9,7,.9)}',
+
+    /* —— 3:4 封面 —— */
+    '.vsk--34 .vsk-cover-top{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;font-size:25px;letter-spacing:.24em;color:var(--vsk-mut)}',
+    '.vsk-cover-brand{color:var(--vsk-ink);font-weight:800}',
+    '.vsk-cover-mid{position:relative;z-index:2;align-self:center;justify-self:center;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;padding:96px 76px;text-align:center;border-radius:44px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(150deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 48%,rgba(4,6,10,.55));box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 44px 110px rgba(0,0,0,.45);backdrop-filter:blur(20px) saturate(1.2);-webkit-backdrop-filter:blur(20px) saturate(1.2)}',
+    '.vsk--gold .vsk-cover-mid{border-radius:32px;border-color:rgba(215,179,106,.2);background:linear-gradient(150deg,#131110,#0a0908);box-shadow:inset 0 1px rgba(255,255,255,.05),0 44px 110px rgba(0,0,0,.55);backdrop-filter:none;-webkit-backdrop-filter:none}',
+    '.vsk-cover-crit{display:inline-flex;align-items:center;padding:14px 30px;border-radius:999px;border:1px solid rgba(255,63,77,.3);background:rgba(255,63,77,.08);color:#ff8b94;font-size:29px;font-weight:800;letter-spacing:.16em}',
+    '.vsk--gold .vsk-cover-crit{border-color:rgba(255,63,77,.42);border-radius:10px;color:#ff3f4d;background:rgba(255,63,77,.06)}',
+    '.vsk-cover-title{margin:0;font-size:126px;font-weight:900;line-height:1.2;letter-spacing:-5px}',
+    '.vsk-cover-title .em-key{font-style:normal;color:var(--vsk-accent);text-shadow:0 0 42px rgba(57,255,136,.22)}',
+    '.vsk-cover-title .em-alt{font-style:normal;color:var(--vsk-alt);text-shadow:0 0 42px rgba(155,108,255,.24)}',
+    '.vsk--gold .vsk-cover-title .em-key,.vsk--gold .vsk-cover-title .em-alt{text-shadow:none}',
+    '.vsk-cover-label{display:inline-block;padding:15px 36px;border-radius:14px;border:1px solid rgba(57,255,136,.28);background:rgba(57,255,136,.08);color:var(--vsk-accent);font-size:31px;font-weight:800;letter-spacing:.1em}',
+    '.vsk--gold .vsk-cover-label{border-color:rgba(215,179,106,.42);background:rgba(215,179,106,.07)}',
+    '.vsk--34 .vsk-cover-foot{position:relative;z-index:2;text-align:center}',
+    '.vsk-cover-sub{margin:0 0 26px;font-size:39px;color:var(--vsk-mut)}',
+    '.vsk-cover-sub b{color:var(--vsk-ink)}',
+    '.vsk-cover-sig{display:block;font-size:23px;letter-spacing:.14em;color:var(--vsk-mut)}',
+    '.vsk-signal{position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,transparent,var(--vsk-accent),var(--vsk-alt),transparent);opacity:.72}',
+
+    /* —— 独立打开时的自适应（不影响导出） —— */
+    '.vsk-stage{margin:0;height:100%;display:flex;align-items:center;justify-content:center;background:#020305;overflow:hidden}',
+    '.vsk-stage .vsk{flex:none}'
+  ].join('\n');
+
+  var INJECTED = false;
+  function ensureCSS() {
+    if (INJECTED) return;
+    var el = document.createElement('style');
+    el.id = 'vsk-style';
+    el.textContent = CSS;
+    document.head.appendChild(el);
+    INJECTED = true;
+  }
+
+  function styleById(id) {
+    for (var i = 0; i < STYLES.length; i++) if (STYLES[i].id === id) return STYLES[i];
+    return STYLES[0];
+  }
+  function size(kind) {
+    return kind === 'cover' ? { w: 1536, h: 2048, cls: 'vsk--34' } : { w: 1920, h: 1080, cls: 'vsk--169' };
+  }
+
+  /* ══════════════════ 16:9 视频画面模板 ══════════════════ */
+  function videoHTML(id) {
+    var s = styleById(id);
+    var sz = size('video');
+    return '<div class="vsk ' + sz.cls + ' vsk--' + s.skin + '" data-vsk-style="' + s.id + '" data-vsk-kind="video">' +
+      '<div class="vsk-gridbg"></div>' +
+      '<header class="vsk-top">' +
+        '<span class="vsk-author"><i class="vsk-dot"></i>' + CASE.author + '<span class="vsk-wx">' + CASE.wechat + '</span></span>' +
+        '<span>' + CASE.section + '</span>' +
+        '<div class="vsk-track"><i style="width:' + CASE.mark + '"></i><b style="left:' + CASE.mark + '"></b></div>' +
+        '<span>' + CASE.mark + '</span>' +
+      '</header>' +
+      '<section class="vsk-main">' +
+        '<div class="vsk-copy">' +
+          '<span class="vsk-eyebrow"><i></i>' + CASE.eyebrow + '</span>' +
+          '<h1 class="vsk-title">' + CASE.title + '</h1>' +
+          '<p class="vsk-sub">' + CASE.sub + '</p>' +
+        '</div>' +
+        '<aside class="vsk-panel">' +
+          '<span class="vsk-stamp">' + CASE.coverCrit + '</span>' +
+          '<div class="vsk-label">' + CASE.panelLabel + '</div>' +
+          '<div class="vsk-score"><b>' + CASE.score + '</b><span>' + CASE.delta + '</span></div>' +
+          '<div class="vsk-chart">' +
+            '<svg viewBox="0 0 420 100" preserveAspectRatio="none" aria-hidden="true">' +
+              '<defs><linearGradient id="vskfill-' + s.id + '" x1="0" y1="0" x2="0" y2="1">' +
+                '<stop offset="0" stop-color="var(--vsk-accent)" stop-opacity=".26"/>' +
+                '<stop offset="1" stop-color="var(--vsk-accent)" stop-opacity="0"/></linearGradient></defs>' +
+              '<path d="M0 90 C48 87 58 72 104 74 S160 52 202 61 S260 36 300 42 S356 8 420 12 L420 100 L0 100Z" fill="url(#vskfill-' + s.id + ')"/>' +
+              '<path d="M0 90 C48 87 58 72 104 74 S160 52 202 61 S260 36 300 42 S356 8 420 12" fill="none" stroke="var(--vsk-accent)" stroke-width="3" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</div>' +
+          '<div class="vsk-steps">' +
+            CASE.steps.map(function (t, i) { return '<div' + (i === CASE.activeStep ? ' class="on"' : '') + '>' + t + '</div>'; }).join('') +
+          '</div>' +
+        '</aside>' +
+      '</section>' +
+      '<footer class="vsk-caption">' + CASE.caption + '</footer>' +
+    '</div>';
+  }
+
+  /* ══════════════════ 3:4 封面模板 ══════════════════ */
+  function coverHTML(id) {
+    var s = styleById(id);
+    var sz = size('cover');
+    return '<div class="vsk ' + sz.cls + ' vsk--' + s.skin + '" data-vsk-style="' + s.id + '" data-vsk-kind="cover">' +
+      '<div class="vsk-gridbg"></div>' +
+      '<header class="vsk-cover-top">' +
+        '<span class="vsk-cover-brand">' + CASE.coverBrand + '</span>' +
+        '<span>' + CASE.no + ' · ' + CASE.dossier + '</span>' +
+      '</header>' +
+      '<section class="vsk-cover-mid">' +
+        '<span class="vsk-cover-crit">' + CASE.coverCrit + '</span>' +
+        '<h1 class="vsk-cover-title">' + CASE.title + '</h1>' +
+        '<span class="vsk-cover-label">' + CASE.coverLabel + '</span>' +
+      '</section>' +
+      '<footer class="vsk-cover-foot">' +
+        '<p class="vsk-cover-sub">' + CASE.coverSub + '</p>' +
+        '<span class="vsk-cover-sig">' + CASE.author + ' ｜ ' + CASE.wechat + '</span>' +
+      '</footer>' +
+      '<div class="vsk-signal"></div>' +
+    '</div>';
+  }
+
+  function frameHTML(id, kind) {
+    return kind === 'cover' ? coverHTML(id) : videoHTML(id);
+  }
+
+  /* ══════════════════ 挂载预览（按容器宽度等比缩放） ══════════════════ */
+  function mount(wrap, id, kind) {
+    if (!wrap) return null;
+    ensureCSS();
+    var sz = size(kind);
+    wrap.innerHTML = frameHTML(id, kind);
+    var root = wrap.firstElementChild;
+    wrap.style.position = 'relative';
+    wrap.style.overflow = 'hidden';
+    wrap.style.aspectRatio = sz.w + ' / ' + sz.h;
+    root.style.position = 'absolute';
+    root.style.left = '0';
+    root.style.top = '0';
+    root.style.transformOrigin = 'top left';
+    var fit = function () {
+      var k = wrap.clientWidth / sz.w;
+      if (k > 0) root.style.transform = 'scale(' + k + ')';
+    };
+    fit();
+    if (window.ResizeObserver) new ResizeObserver(fit).observe(wrap);
+    else window.addEventListener('resize', fit);
+    return root;
+  }
+
+  /* ══════════════════ 独立 HTML（下载 / 复制用） ══════════════════ */
+  function standalone(id, kind) {
+    var s = styleById(id);
+    var sz = size(kind);
+    var name = s.name + ' · ' + (kind === 'cover' ? '3:4 封面模板' : '16:9 视频画面模板');
+    return '<!doctype html>\n<html lang="zh-CN">\n<head>\n<meta charset="utf-8">\n' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">\n' +
+      '<title>' + name + '</title>\n' +
+      '<style>\n*{box-sizing:border-box}\n' + CSS + '\n</style>\n</head>\n' +
+      '<body class="vsk-stage">\n' + frameHTML(id, kind) + '\n' +
+      '<script>\n(function(){var W=' + sz.w + ',H=' + sz.h + ';var f=document.querySelector(".vsk");\n' +
+      'function fit(){var k=Math.min(innerWidth/W,innerHeight/H);f.style.transform="scale("+k+")";}\n' +
+      'addEventListener("resize",fit);fit();})();\n<\/script>\n</body>\n</html>\n';
+  }
+
+  /* ══════════════════ 导出 PNG（SVG foreignObject → Canvas） ══════════════════ */
+  function exportPNG(id, kind, done) {
+    var s = styleById(id);
+    var sz = size(kind);
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + sz.w + '" height="' + sz.h + '" viewBox="0 0 ' + sz.w + ' ' + sz.h + '">' +
+      '<foreignObject x="0" y="0" width="' + sz.w + '" height="' + sz.h + '">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + sz.w + 'px;height:' + sz.h + 'px">' +
+      '<style>' + CSS + '</style>' + frameHTML(id, kind) +
+      '</div></foreignObject></svg>';
+    var img = new Image();
+    img.onload = function () {
+      var cv = document.createElement('canvas');
+      cv.width = sz.w;
+      cv.height = sz.h;
+      cv.getContext('2d').drawImage(img, 0, 0);
+      cv.toBlob(function (b) {
+        if (!b) return done(false);
+        if (MF.download) MF.download(b, fileName(id, kind, 'png'));
+        done(true);
+      }, 'image/png');
+    };
+    img.onerror = function () { done(false); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+
+  function fileName(id, kind, ext) {
+    var s = styleById(id);
+    return '嘉Jaykou动效库-' + s.name + '-' + (kind === 'cover' ? '3x4封面' : '16x9视频') + '模板.' + ext;
+  }
+
+  /* ══════════════════ 对外 API ══════════════════ */
+  MF.VIDEO_STYLES = STYLES;
+  MF.vsStyle = styleById;
+  MF.vsFrameHTML = function (id, kind) { ensureCSS(); return frameHTML(id, kind); };
+  MF.vsMount = mount;
+  MF.vsStandalone = standalone;
+  MF.vsFileName = fileName;
+  MF.vsExportPNG = exportPNG;
+  MF.vsDownloadHTML = function (id, kind) {
+    if (!MF.downloadText) return false;
+    MF.downloadText(standalone(id, kind), fileName(id, kind, 'html'), 'text/html');
+    return true;
+  };
+})();
+
 /* ════════ assets/js/studio.js ════════ */
 /* ==========================================================================
    JAYKOU · 工作台逻辑
@@ -21391,8 +21802,8 @@ var src_default = GIFEncoder;
   function filtered() {
     var list = MF.effects.slice();
     var f = S.filter;
+    /* 类型只剩两个维度：全库 / 收藏（原先的 Block、Component 已并入全库，靠分类下钻区分） */
     if (f.type === 'fav') list = list.filter(function (e) { return S.favorites.has(e.id); });
-    else if (f.type === 'block' || f.type === 'component') list = list.filter(function (e) { return e.type === f.type; });
     if (f.cat) list = list.filter(function (e) { return e.cat === f.cat; });
     if (f.sub) list = list.filter(function (e) { return e.sub === f.sub; });
     if (f.tag) list = list.filter(function (e) { return e.tags.indexOf(f.tag) >= 0; });
@@ -21418,6 +21829,16 @@ var src_default = GIFEncoder;
     var list = filtered();
     $('#result-count').textContent = '共 ' + list.length + ' 个动效 · ' + MF.categories.length + ' 个分类';
     $('#browse-count').textContent = list.length;
+    /* 标题跟着筛选走，让人知道自己钻到第几层了 */
+    var bt = $('#browse-title');
+    if (bt) {
+      if (S.filter.type === 'fav') bt.textContent = '我的收藏';
+      else if (S.filter.sub) bt.textContent = S.filter.cat + ' · ' + S.filter.sub;
+      else if (S.filter.cat) bt.textContent = S.filter.cat;
+      else if (S.filter.q) bt.textContent = '搜索「' + S.filter.q + '」';
+      else bt.textContent = '全部动效';
+      if (S.filter.tag) bt.textContent += ' · #' + S.filter.tag;
+    }
     var empty = $('#empty-state');
     empty.hidden = list.length > 0;
     /* 空态文案按筛选来源区分：收藏空 vs 搜索无结果，引导动作不同 */
@@ -21595,12 +22016,41 @@ var src_default = GIFEncoder;
     });
   }
 
+  /* 细类缓存：大类 → [{ sub, n }]，避免每次重建都全量扫 468 条 */
+  var subIndex = null;
+  function ensureSubIndex() {
+    if (subIndex) return subIndex;
+    subIndex = {};
+    MF.effects.forEach(function (e) {
+      var box = subIndex[e.cat] || (subIndex[e.cat] = {});
+      box[e.sub] = (box[e.sub] || 0) + 1;
+    });
+    return subIndex;
+  }
+  function subsOf(cat) {
+    var box = ensureSubIndex()[cat] || {};
+    return Object.keys(box).map(function (k) { return { sub: k, n: box[k] }; })
+      .sort(function (a, b) { return b.n - a.n; });
+  }
+
+  /* 当前筛选结果里的高频标签（≥3 个动效才露出，收敛 685 个碎标签的长尾） */
+  function hotTags(list, min, cap) {
+    var m = {};
+    list.forEach(function (e) { (e.tags || []).forEach(function (t) { m[t] = (m[t] || 0) + 1; }); });
+    return Object.keys(m).filter(function (t) { return m[t] >= (min || 3); })
+      .sort(function (a, b) { return m[b] - m[a] || a.localeCompare(b, 'zh'); })
+      .slice(0, cap || 14)
+      .map(function (t) { return { tag: t, n: m[t] }; });
+  }
+
   function buildBrowseCats() {
     var wrap = $('#browse-cats');
     if (!wrap) return;
     wrap.innerHTML = '';
     var counts = {};
     MF.effects.forEach(function (e) { counts[e.cat] = (counts[e.cat] || 0) + 1; });
+
+    /* ── 一级：全部 + 10 个大类 ── */
     var mk = function (label, cat, n) {
       var on = cat ? S.filter.cat === cat : !S.filter.cat;
       var b = document.createElement('button');
@@ -21611,13 +22061,84 @@ var src_default = GIFEncoder;
       b.addEventListener('click', function () {
         S.filter.cat = cat;
         S.filter.sub = null;
+        S.filter.tag = null;
         S.filter.type = S.filter.type === 'fav' ? 'all' : S.filter.type;
-        buildCategories(); syncTabs(); buildCards();
+        buildCategories(); syncTabs(); buildBrowseCats(); buildCards();
       });
       wrap.appendChild(b);
     };
     mk('全部', null, MF.effects.length);
     MF.categories.forEach(function (c) { mk(c, c, counts[c] || 0); });
+
+    /* ── 二级：选中大类后展开该类的细类 ── */
+    var subsBox = $('#browse-subs');
+    if (subsBox) {
+      subsBox.innerHTML = '';
+      subsBox.hidden = !S.filter.cat;
+      if (S.filter.cat) {
+        var subs = subsOf(S.filter.cat);
+        if (subs.length > 1) {
+          var mkSub = function (label, sub, n) {
+            var on = sub ? S.filter.sub === sub : !S.filter.sub;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'sub-chip' + (on ? ' active' : '');
+            b.innerHTML = '<span>' + esc(label) + '</span><i>' + n + '</i>';
+            b.addEventListener('click', function () {
+              S.filter.sub = sub;
+              S.filter.tag = null;
+              buildBrowseCats(); buildCategories(); buildCards();
+            });
+            subsBox.appendChild(b);
+          };
+          var total = subs.reduce(function (a, x) { return a + x.n; }, 0);
+          mkSub('全部细类', null, total);
+          subs.forEach(function (x) { mkSub(x.sub, x.sub, x.n); });
+        } else {
+          subsBox.hidden = true;
+        }
+      }
+    }
+
+    /* ── 三级：当前范围里的高频标签（可点击叠加筛选） ── */
+    var tagsBox = $('#browse-tags');
+    if (tagsBox) {
+      tagsBox.innerHTML = '';
+      var scope = MF.effects.filter(function (e) {
+        return (!S.filter.cat || e.cat === S.filter.cat) && (!S.filter.sub || e.sub === S.filter.sub);
+      });
+      var tags = hotTags(scope, 3, 14);
+      if (S.filter.tag && !tags.some(function (x) { return x.tag === S.filter.tag; })) {
+        tags.unshift({ tag: S.filter.tag, n: 0 });   /* 选中的冷门标签也要显示出来 */
+      }
+      tagsBox.hidden = tags.length < 3;
+      if (!tagsBox.hidden) {
+        var lbl = document.createElement('span');
+        lbl.className = 'bt-label';
+        lbl.textContent = '风格标签';
+        tagsBox.appendChild(lbl);
+        var mkTag = function (t, n) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'tag-chip' + (S.filter.tag === t ? ' active' : '');
+          b.innerHTML = '<span>' + esc(t) + '</span>' + (n ? '<i>' + n + '</i>' : '');
+          b.addEventListener('click', function () {
+            S.filter.tag = S.filter.tag === t ? null : t;
+            buildBrowseCats(); buildCards();
+          });
+          tagsBox.appendChild(b);
+        };
+        tags.forEach(function (x) { mkTag(x.tag, x.n); });
+        if (S.filter.tag) {
+          var clr = document.createElement('button');
+          clr.type = 'button';
+          clr.className = 'tag-clear';
+          clr.textContent = '清除标签';
+          clr.addEventListener('click', function () { S.filter.tag = null; buildBrowseCats(); buildCards(); });
+          tagsBox.appendChild(clr);
+        }
+      }
+    }
   }
 
   function buildCategories() {
@@ -21680,8 +22201,6 @@ var src_default = GIFEncoder;
       }
     });
     $('#c-all').textContent = MF.effects.length;
-    $('#c-block').textContent = MF.effects.filter(function (e) { return e.type === 'block'; }).length;
-    $('#c-comp').textContent = MF.effects.filter(function (e) { return e.type === 'component'; }).length;
     $('#c-fav').textContent = S.favorites.size;
     $('#lib-stat').textContent = MF.effects.length + ' 个动效 · ' + MF.categories.length + ' 个分类 · 全部可导出';
   }
@@ -21755,7 +22274,7 @@ var src_default = GIFEncoder;
     buildRecent();
     $$('#type-tabs .tab').forEach(function (t) { /* 保持筛选 */ });
     syncFavBtn(false);
-    document.title = eff.name + ' · 嘉Jaykou动效工作台';
+    document.title = eff.name + ' · 嘉Jaykou动效库';
     /* 深链同步：任意时刻复制地址栏即可分享当前动效（不触发 hashchange） */
     try { history.replaceState(null, '', '#e=' + id); } catch (e2) {}
   }
@@ -21779,8 +22298,10 @@ var src_default = GIFEncoder;
       b.className = 'tag';
       b.textContent = '#' + t;
       b.addEventListener('click', function () {
-        S.filter.tag = t; S.filter.q = ''; $('#search').value = '';
-        buildCards(); openBrowser();
+        /* 标签是全库维度：清掉分类/细类，否则可能落进一个空结果 */
+        S.filter.tag = t; S.filter.q = ''; S.filter.cat = null; S.filter.sub = null;
+        $('#search').value = '';
+        buildCategories(); buildCards(); openBrowser();
         toast('已按标签筛选：' + t);
       });
       box.appendChild(b);
@@ -22210,7 +22731,7 @@ var src_default = GIFEncoder;
       var effD = MF.byId[S.current.id];
       var rpD = MF.resolveParams(effD, S.current.params, S.settings);
       var head = [
-        '/* ' + effD.name + ' · 由 嘉Jaykou动效工作台 生成 · 依赖 MFCore 运行时 */',
+        '/* ' + effD.name + ' · 由 嘉Jaykou动效库 生成 · 依赖 MFCore 运行时 */',
         '/* 用法：ctx.save(); draw(ctx, t, PARAMS, U); ctx.restore();',
         '   U = MFCore.createUtils({ W,H,D,t,accent,accent2,ink,bg1,bg2,bgMode,seed }) */',
         'const PARAMS = ' + JSON.stringify(rpD, null, 2) + ';',
@@ -22233,7 +22754,7 @@ var src_default = GIFEncoder;
     } else if (kind === 'fav-list') {
       var favs2 = MF.effects.filter(function (e) { return S.favorites.has(e.id); });
       if (!favs2.length) { toast('收藏夹还是空的 —— 先给喜欢的动效点收藏'); return; }
-      var md = '# 我的收藏集 · 嘉Jaykou动效工作台\n\n' + favs2.map(function (e, i) {
+      var md = '# 我的收藏集 · 嘉Jaykou动效库\n\n' + favs2.map(function (e, i) {
         return (i + 1) + '. **' + e.name + '**（' + e.cat + ' · ' + e.dur + 's）— ' + e.desc;
       }).join('\n') + '\n';
       copyText(md, '收藏清单已复制（Markdown，' + favs2.length + ' 条）');
@@ -22286,6 +22807,116 @@ var src_default = GIFEncoder;
     touchVis = [];
   }
 
+  /* ══════════════════ 视频风格板块（视觉合同来自 codex 剪辑工作台） ══════════════════ */
+  var stylePick = (MF.VIDEO_STYLES && MF.VIDEO_STYLES[0]) ? MF.VIDEO_STYLES[0].id : null;
+
+  function stylesOpen() { var el = $('#styles'); return !!el && !el.hidden; }
+
+  function openStyles(id) {
+    if (id) stylePick = id;
+    if (S.browserOpen) closeBrowser();
+    $('#styles').hidden = false;
+    buildStyleTabs();
+    renderStyle();
+    $('#styles').scrollTop = 0;
+  }
+  function closeStyles() { $('#styles').hidden = true; }
+
+  function buildStyleTabs() {
+    var wrap = $('#style-tabs');
+    if (!wrap || wrap.dataset.built) return;
+    wrap.dataset.built = '1';
+    wrap.innerHTML = '';
+    MF.VIDEO_STYLES.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'st-tab' + (s.id === stylePick ? ' active' : '');
+      b.dataset.style = s.id;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(s.id === stylePick));
+      b.innerHTML = '<b>' + esc(s.name) + '<span class="st-badge">' + esc(s.badge) + '</span></b>' +
+        '<em>' + esc(s.tagline) + '</em>' +
+        '<span class="st-en">' + esc(s.en) + ' · ' + esc(s.ver) + '</span>';
+      b.addEventListener('click', function () { selectStyle(s.id); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function selectStyle(id) {
+    stylePick = id;
+    $$('#style-tabs .st-tab').forEach(function (b) {
+      var on = b.dataset.style === id;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    renderStyle();
+    $('#styles').scrollTop = 0;
+  }
+
+  function renderStyle() {
+    var s = MF.vsStyle(stylePick);
+    if (!s) return;
+
+    $('#style-info').innerHTML =
+      '<div class="vi-block">' +
+        '<div class="vi-name">' + esc(s.name) + '</div>' +
+        '<div class="vi-en">' + esc(s.en) + '</div>' +
+        '<div class="vi-tagline">' + esc(s.tagline) + '</div>' +
+        '<div class="vi-desc">' + esc(s.desc) + '</div>' +
+        '<div class="vi-vibe">' + (s.vibe || []).map(function (v) { return '<span>' + esc(v) + '</span>'; }).join('') + '</div>' +
+      '</div>' +
+      '<div class="vi-block"><h4>配色系统</h4><div class="vi-sw">' +
+        s.tokens.map(function (t) {
+          return '<div class="sw" title="' + esc(t.d) + '"><i style="background:' + esc(t.v) + '"></i>' +
+            '<span><b>' + esc(t.n) + '</b><code>' + esc(t.v) + '</code></span></div>';
+        }).join('') +
+      '</div></div>' +
+      '<div class="vi-block"><h4>语义规则</h4><ul class="vi-list vi-sem">' +
+        (s.semantics || []).map(function (r) {
+          return '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>';
+        }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>字体</h4><div class="vi-font">' + esc(s.font) + '</div></div>' +
+      '<div class="vi-block"><h4>面板材质</h4><div class="vi-font">' + esc(s.panel) + '</div></div>' +
+      '<div class="vi-block"><h4>硬规则</h4><ul class="vi-list vi-ok">' +
+        s.rules.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>禁止方向</h4><ul class="vi-list vi-no">' +
+        s.banned.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>画面比例与输出</h4><ul class="vi-list vi-spec">' +
+        s.spec.map(function (r) { return '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>'; }).join('') +
+      '</ul></div>';
+
+    /* 固定案例模板（预览 == 导出，同一份 HTML/CSS） */
+    MF.vsMount($('#tpl-video-wrap'), s.id, 'video');
+    MF.vsMount($('#tpl-cover-wrap'), s.id, 'cover');
+    var st = $('#style-count');
+    if (st) st.textContent = MF.VIDEO_STYLES.length;
+  }
+
+  function bindStyleActions() {
+    var host = $('#styles');
+    if (!host) return;
+    host.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.tpl-actions button') : null;
+      if (!b) return;
+      var kind = b.dataset.kind === 'cover' ? 'cover' : 'video';
+      var act = b.dataset.tpl;
+      if (act === 'html') {
+        if (MF.vsDownloadHTML(stylePick, kind)) toast('已下载模板 HTML · 双击即可打开');
+      } else if (act === 'png') {
+        toast('正在生成 PNG…');
+        MF.vsExportPNG(stylePick, kind, function (ok) {
+          toast(ok ? 'PNG 已导出 ' + (kind === 'cover' ? '1536×2048' : '1920×1080')
+                   : 'PNG 导出失败：请改用「下载 HTML 模板」后截图');
+        });
+      } else if (act === 'copy') {
+        copyText(MF.vsStandalone(stylePick, kind), '模板 HTML 源码已复制');
+      }
+    });
+  }
+
   /* ══════════════════ 事件绑定 ══════════════════ */
   function bind() {
     /* 比例 */
@@ -22313,8 +22944,11 @@ var src_default = GIFEncoder;
       var v = this.value;
       clearTimeout(searchTimer);
       searchTimer = setTimeout(function () {
-        S.filter.q = v.trim(); S.filter.tag = null;
-        buildCards();
+        S.filter.q = v.trim();
+        /* 搜索框在顶栏 = 全库搜索：必须清掉分类/细类/标签，
+           否则「在大类里搜另一个类的东西」会得到 0 结果却看不出原因 */
+        if (S.filter.q) { S.filter.cat = null; S.filter.sub = null; S.filter.tag = null; }
+        buildCategories(); buildCards();
         openBrowser();
       }, 160);
     });
@@ -22489,6 +23123,12 @@ var src_default = GIFEncoder;
       buildCategories(); syncTabs(); buildCards();
     });
 
+    /* 视频风格板块 */
+    $('#styles-open').addEventListener('click', function () { openStyles(); });
+    $('#styles-back').addEventListener('click', closeStyles);
+    $('#styles-close').addEventListener('click', closeStyles);
+    bindStyleActions();
+
     /* 弹窗 */
     $('#help-open').addEventListener('click', function () { $('#help-modal').hidden = false; });
     $('#help-close').addEventListener('click', function () { $('#help-modal').hidden = true; });
@@ -22508,6 +23148,7 @@ var src_default = GIFEncoder;
       if (e.key === 'Escape') {
         if (!$('#help-modal').hidden) { $('#help-modal').hidden = true; return; }
         if (!$('#script-modal').hidden) { $('#script-modal').hidden = true; return; }
+        if (stylesOpen()) { closeStyles(); return; }
         if (S.browserOpen) closeBrowser();
         return;
       }
@@ -22518,6 +23159,7 @@ var src_default = GIFEncoder;
       else if (e.key === 'ArrowLeft') { $('#prev-frame').click(); }
       else if (e.key === 'ArrowRight') { $('#next-frame').click(); }
       else if (e.key === 'b' || e.key === 'B') { S.browserOpen ? closeBrowser() : openBrowser(); }
+      else if (e.key === 'v' || e.key === 'V') { stylesOpen() ? closeStyles() : openStyles(); }
       else if (e.key === 'f' || e.key === 'F') { if (S.current) $('#fav-current').click(); }
       else if (e.key === 't' || e.key === 'T') { $('#theme-toggle').click(); }
       else if (e.key === '[' || e.key === ']') {
@@ -22563,31 +23205,32 @@ var src_default = GIFEncoder;
   }
 
   /* ══════════════════ 口播稿推荐（本地规则引擎） ══════════════════ */
+  /* cats 里可以写大类，也可以写细类（analyzeScript 两个维度都匹配） */
   var SCRIPT_RULES = [
     { phase: '开场', label: '开场问候', kws: ['大家好', '欢迎', '哈喽', 'hello', 'hi', '开场', '这期', '今天', '来了', '你们好'],
-      cats: ['入场与反馈', '入场序列', '文字与排版'], tags: ['入场', '标题'] },
+      cats: ['入场序列', '文字特效', '遮罩与跑马灯'], tags: ['入场', '标题'] },
     { phase: '要点', label: '数据呈现', kws: ['数据', '增长', '%', '百分之', '占比', '统计', '报表', '营收', '销量', '用户', '市场规模', '提升', '下降', '对比', '万', '亿'],
-      cats: ['数据可视化', '数据图表', '数据大屏', '数字计数', '对比展示', 'HUD 仪表'], tags: ['数据', '图表', '计数'] },
+      cats: ['统计图表', '数据图表', '数据大屏', '数字计数', '对比展示', 'HUD 仪表', '时间轴'], tags: ['数据', '图表', '计数'] },
     { phase: '要点', label: '科技 / AI', kws: ['ai', '科技', '智能', '算法', '模型', '未来', '创新', '技术', '自动化', '机器人', '数字化'],
-      cats: ['几何与抽象', '粒子与反馈', '粒子系统', '3D 立体', '光影氛围', '终端代码', '几何构成'], tags: ['科技', '粒子', '抽象'] },
+      cats: ['几何与抽象', '粒子系统', '3D 立体', '光影氛围', '终端代码', '几何构成'], tags: ['科技', '粒子', '抽象'] },
     { phase: '要点', label: '重点强调', kws: ['重点', '关键', '注意', '核心', '记住', '划重点', '千万别', '一定要', '敲黑板', '秘诀'],
-      cats: ['文字特效', '状态与进度', '几何构成'], tags: ['强调', '标题', '高亮'] },
+      cats: ['文字特效', '加载与进度', '几何构成'], tags: ['强调', '标题', '高亮'] },
     { phase: '要点', label: '流程步骤', kws: ['第一步', '第二步', '步骤', '流程', '然后', '接着', '方法', '怎么', '如何', '教程', '攻略'],
-      cats: ['时间轴', '状态与进度', '办公效率', '叙事与演示', '加载与进度'], tags: ['步骤', '流程', '时间'] },
+      cats: ['时间轴', '加载与进度', '办公效率', '叙事与演示'], tags: ['步骤', '流程', '时间'] },
     { phase: '要点', label: '产品展示', kws: ['产品', '实物', '开箱', '展示', '设计', '作品', '房子', '室内', '颜值', '质感'],
-      cats: ['空间与展示', '交互与卡片', '材质与纹理', '界面组件'], tags: ['展示', '3d'] },
+      cats: ['空间与展示', '材质与纹理', '界面组件'], tags: ['展示', '3d'] },
     { phase: '要点', label: '地点行程', kws: ['城市', '国家', '旅行', '路线', '地图', '出发', '到达', '距离', '打卡'],
       cats: ['地图轨迹'], tags: ['地图', '轨迹'] },
     { phase: '要点', label: '情绪氛围', kws: ['温暖', '治愈', '浪漫', '氛围', '心情', '感受', '安静', '放松', '音乐', '节奏'],
-      cats: ['光影氛围', '天气氛围', '创意生活', '音乐律动', '涂鸦手绘'], tags: ['氛围', '光影'] },
+      cats: ['光影氛围', '天气氛围', '物理机关', '音乐律动', '涂鸦手绘'], tags: ['氛围', '光影'] },
     { phase: '要点', label: '剧情字幕', kws: ['说', '台词', '字幕', '弹幕', '吐槽', '聊天', '对话', '采访'],
       cats: ['弹幕字幕', '社交叙事'], tags: ['字幕', '弹幕'] },
     { phase: '收尾', label: '行动号召', kws: ['点赞', '关注', '订阅', '评论', '转发', '分享', '下期', '拜拜', '再见', '别忘了', '粉丝'],
-      cats: ['社交叙事', '退场收尾'], tags: ['社交', '互动'] },
+      cats: ['社交叙事', '退场收尾', '操作反馈'], tags: ['社交', '互动'] },
     { phase: '收尾', label: '品牌收尾', kws: ['品牌', 'logo', '官方', '出品', '合作', '联系方式', '官网'],
       cats: ['品牌与标识', '退场收尾'], tags: ['logo', '品牌'] },
     { phase: '转场', label: '转场过渡', kws: ['接下来', '另一个', '说到', '切换', '换一个', '转入', ' meanwhile'],
-      cats: ['转场切换', '镜头与转场', '镜头运动', '形变转换'], tags: ['转场'] }
+      cats: ['转场切换', '镜头运动', '形变转换'], tags: ['转场'] }
   ];
 
   function analyzeScript(text) {
@@ -22602,7 +23245,8 @@ var src_default = GIFEncoder;
     hits.forEach(function (h) {
       var scored = [];
       MF.effects.forEach(function (e) {
-        var aff = h.rule.cats.indexOf(e.cat) >= 0 ? 3 : 0;
+        /* 大类与细类都匹配：只比 e.cat 时，规则里写的细类名会全部落空 */
+        var aff = (h.rule.cats.indexOf(e.cat) >= 0 || h.rule.cats.indexOf(e.sub) >= 0) ? 3 : 0;
         var tg = e.tags || [];
         for (var i = 0; i < h.rule.tags.length; i++) {
           if (tg.indexOf(h.rule.tags[i]) >= 0) { aff += 1.5; break; }

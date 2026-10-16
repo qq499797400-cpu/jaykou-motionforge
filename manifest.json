@@ -1,6 +1,6 @@
 {
-  "name": "嘉Jaykou动效工作台",
-  "short_name": "动效工作台",
+  "name": "嘉Jaykou动效库",
+  "short_name": "动效库",
   "description": "468 个动效在线可调、可导出 GIF/MP4/HTML/React，参数实时联动。",
   "lang": "zh-CN",
   "start_url": "./index.html",

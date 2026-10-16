@@ -15,14 +15,14 @@ MANIFEST = (
     + ['assets/js/effects-%02d.js' % i for i in range(1, 5)]
     + ['assets/js/forge.js']
     + ['assets/js/effects-%02d.js' % i for i in range(5, 25)]
-    + ['assets/js/vendor/gifenc.js', 'assets/js/gif-export.js', 'assets/js/studio.js']
+    + ['assets/js/vendor/gifenc.js', 'assets/js/gif-export.js', 'assets/js/styles-kit.js', 'assets/js/studio.js']
 )
 
 if not srcs:
     srcs = MANIFEST
 assert srcs, '未找到任何脚本'
 
-parts = ['/* 嘉Jaykou动效工作台 · 合并包 v%s · 由 tools/build-bundle.py 生成 */' % time.strftime('%Y%m%d%H%M')]
+parts = ['/* 嘉Jaykou动效库 · 合并包 v%s · 由 tools/build-bundle.py 生成 */' % time.strftime('%Y%m%d%H%M')]
 for s in srcs:
     p = ROOT / s
     code = p.read_text(encoding='utf-8')
@@ -30,3 +30,14 @@ for s in srcs:
 out = ROOT / 'assets/js/bundle.js'
 out.write_text('\n'.join(parts), encoding='utf-8')
 print('合并 %d 个文件 → %s（%d 字符）' % (len(srcs), out.relative_to(ROOT), len('\n'.join(parts))))
+
+# 品牌别名入口：生成一份与 index.html 完全同步的副本，文件名即品牌名。
+# index.html 是 GitHub Pages 的根入口（不可改名），这个副本给本地双击 / 归档用。
+alias = ROOT / '嘉Jaykou动效库.html'
+alias.write_text(
+    '<!-- 由 tools/build-bundle.py 自动生成，内容与 index.html 逐字节相同。\n'
+    '     请勿直接编辑本文件 —— 改动会写进 index.html 里，然后重跑 build-bundle.py。 -->\n'
+    + html,
+    encoding='utf-8',
+)
+print('别名入口 → %s' % alias.name)

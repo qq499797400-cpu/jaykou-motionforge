@@ -301,8 +301,8 @@
   function filtered() {
     var list = MF.effects.slice();
     var f = S.filter;
+    /* 类型只剩两个维度：全库 / 收藏（原先的 Block、Component 已并入全库，靠分类下钻区分） */
     if (f.type === 'fav') list = list.filter(function (e) { return S.favorites.has(e.id); });
-    else if (f.type === 'block' || f.type === 'component') list = list.filter(function (e) { return e.type === f.type; });
     if (f.cat) list = list.filter(function (e) { return e.cat === f.cat; });
     if (f.sub) list = list.filter(function (e) { return e.sub === f.sub; });
     if (f.tag) list = list.filter(function (e) { return e.tags.indexOf(f.tag) >= 0; });
@@ -328,6 +328,16 @@
     var list = filtered();
     $('#result-count').textContent = '共 ' + list.length + ' 个动效 · ' + MF.categories.length + ' 个分类';
     $('#browse-count').textContent = list.length;
+    /* 标题跟着筛选走，让人知道自己钻到第几层了 */
+    var bt = $('#browse-title');
+    if (bt) {
+      if (S.filter.type === 'fav') bt.textContent = '我的收藏';
+      else if (S.filter.sub) bt.textContent = S.filter.cat + ' · ' + S.filter.sub;
+      else if (S.filter.cat) bt.textContent = S.filter.cat;
+      else if (S.filter.q) bt.textContent = '搜索「' + S.filter.q + '」';
+      else bt.textContent = '全部动效';
+      if (S.filter.tag) bt.textContent += ' · #' + S.filter.tag;
+    }
     var empty = $('#empty-state');
     empty.hidden = list.length > 0;
     /* 空态文案按筛选来源区分：收藏空 vs 搜索无结果，引导动作不同 */
@@ -505,12 +515,41 @@
     });
   }
 
+  /* 细类缓存：大类 → [{ sub, n }]，避免每次重建都全量扫 468 条 */
+  var subIndex = null;
+  function ensureSubIndex() {
+    if (subIndex) return subIndex;
+    subIndex = {};
+    MF.effects.forEach(function (e) {
+      var box = subIndex[e.cat] || (subIndex[e.cat] = {});
+      box[e.sub] = (box[e.sub] || 0) + 1;
+    });
+    return subIndex;
+  }
+  function subsOf(cat) {
+    var box = ensureSubIndex()[cat] || {};
+    return Object.keys(box).map(function (k) { return { sub: k, n: box[k] }; })
+      .sort(function (a, b) { return b.n - a.n; });
+  }
+
+  /* 当前筛选结果里的高频标签（≥3 个动效才露出，收敛 685 个碎标签的长尾） */
+  function hotTags(list, min, cap) {
+    var m = {};
+    list.forEach(function (e) { (e.tags || []).forEach(function (t) { m[t] = (m[t] || 0) + 1; }); });
+    return Object.keys(m).filter(function (t) { return m[t] >= (min || 3); })
+      .sort(function (a, b) { return m[b] - m[a] || a.localeCompare(b, 'zh'); })
+      .slice(0, cap || 14)
+      .map(function (t) { return { tag: t, n: m[t] }; });
+  }
+
   function buildBrowseCats() {
     var wrap = $('#browse-cats');
     if (!wrap) return;
     wrap.innerHTML = '';
     var counts = {};
     MF.effects.forEach(function (e) { counts[e.cat] = (counts[e.cat] || 0) + 1; });
+
+    /* ── 一级：全部 + 10 个大类 ── */
     var mk = function (label, cat, n) {
       var on = cat ? S.filter.cat === cat : !S.filter.cat;
       var b = document.createElement('button');
@@ -521,13 +560,84 @@
       b.addEventListener('click', function () {
         S.filter.cat = cat;
         S.filter.sub = null;
+        S.filter.tag = null;
         S.filter.type = S.filter.type === 'fav' ? 'all' : S.filter.type;
-        buildCategories(); syncTabs(); buildCards();
+        buildCategories(); syncTabs(); buildBrowseCats(); buildCards();
       });
       wrap.appendChild(b);
     };
     mk('全部', null, MF.effects.length);
     MF.categories.forEach(function (c) { mk(c, c, counts[c] || 0); });
+
+    /* ── 二级：选中大类后展开该类的细类 ── */
+    var subsBox = $('#browse-subs');
+    if (subsBox) {
+      subsBox.innerHTML = '';
+      subsBox.hidden = !S.filter.cat;
+      if (S.filter.cat) {
+        var subs = subsOf(S.filter.cat);
+        if (subs.length > 1) {
+          var mkSub = function (label, sub, n) {
+            var on = sub ? S.filter.sub === sub : !S.filter.sub;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'sub-chip' + (on ? ' active' : '');
+            b.innerHTML = '<span>' + esc(label) + '</span><i>' + n + '</i>';
+            b.addEventListener('click', function () {
+              S.filter.sub = sub;
+              S.filter.tag = null;
+              buildBrowseCats(); buildCategories(); buildCards();
+            });
+            subsBox.appendChild(b);
+          };
+          var total = subs.reduce(function (a, x) { return a + x.n; }, 0);
+          mkSub('全部细类', null, total);
+          subs.forEach(function (x) { mkSub(x.sub, x.sub, x.n); });
+        } else {
+          subsBox.hidden = true;
+        }
+      }
+    }
+
+    /* ── 三级：当前范围里的高频标签（可点击叠加筛选） ── */
+    var tagsBox = $('#browse-tags');
+    if (tagsBox) {
+      tagsBox.innerHTML = '';
+      var scope = MF.effects.filter(function (e) {
+        return (!S.filter.cat || e.cat === S.filter.cat) && (!S.filter.sub || e.sub === S.filter.sub);
+      });
+      var tags = hotTags(scope, 3, 14);
+      if (S.filter.tag && !tags.some(function (x) { return x.tag === S.filter.tag; })) {
+        tags.unshift({ tag: S.filter.tag, n: 0 });   /* 选中的冷门标签也要显示出来 */
+      }
+      tagsBox.hidden = tags.length < 3;
+      if (!tagsBox.hidden) {
+        var lbl = document.createElement('span');
+        lbl.className = 'bt-label';
+        lbl.textContent = '风格标签';
+        tagsBox.appendChild(lbl);
+        var mkTag = function (t, n) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'tag-chip' + (S.filter.tag === t ? ' active' : '');
+          b.innerHTML = '<span>' + esc(t) + '</span>' + (n ? '<i>' + n + '</i>' : '');
+          b.addEventListener('click', function () {
+            S.filter.tag = S.filter.tag === t ? null : t;
+            buildBrowseCats(); buildCards();
+          });
+          tagsBox.appendChild(b);
+        };
+        tags.forEach(function (x) { mkTag(x.tag, x.n); });
+        if (S.filter.tag) {
+          var clr = document.createElement('button');
+          clr.type = 'button';
+          clr.className = 'tag-clear';
+          clr.textContent = '清除标签';
+          clr.addEventListener('click', function () { S.filter.tag = null; buildBrowseCats(); buildCards(); });
+          tagsBox.appendChild(clr);
+        }
+      }
+    }
   }
 
   function buildCategories() {
@@ -590,8 +700,6 @@
       }
     });
     $('#c-all').textContent = MF.effects.length;
-    $('#c-block').textContent = MF.effects.filter(function (e) { return e.type === 'block'; }).length;
-    $('#c-comp').textContent = MF.effects.filter(function (e) { return e.type === 'component'; }).length;
     $('#c-fav').textContent = S.favorites.size;
     $('#lib-stat').textContent = MF.effects.length + ' 个动效 · ' + MF.categories.length + ' 个分类 · 全部可导出';
   }
@@ -665,7 +773,7 @@
     buildRecent();
     $$('#type-tabs .tab').forEach(function (t) { /* 保持筛选 */ });
     syncFavBtn(false);
-    document.title = eff.name + ' · 嘉Jaykou动效工作台';
+    document.title = eff.name + ' · 嘉Jaykou动效库';
     /* 深链同步：任意时刻复制地址栏即可分享当前动效（不触发 hashchange） */
     try { history.replaceState(null, '', '#e=' + id); } catch (e2) {}
   }
@@ -689,8 +797,10 @@
       b.className = 'tag';
       b.textContent = '#' + t;
       b.addEventListener('click', function () {
-        S.filter.tag = t; S.filter.q = ''; $('#search').value = '';
-        buildCards(); openBrowser();
+        /* 标签是全库维度：清掉分类/细类，否则可能落进一个空结果 */
+        S.filter.tag = t; S.filter.q = ''; S.filter.cat = null; S.filter.sub = null;
+        $('#search').value = '';
+        buildCategories(); buildCards(); openBrowser();
         toast('已按标签筛选：' + t);
       });
       box.appendChild(b);
@@ -1120,7 +1230,7 @@
       var effD = MF.byId[S.current.id];
       var rpD = MF.resolveParams(effD, S.current.params, S.settings);
       var head = [
-        '/* ' + effD.name + ' · 由 嘉Jaykou动效工作台 生成 · 依赖 MFCore 运行时 */',
+        '/* ' + effD.name + ' · 由 嘉Jaykou动效库 生成 · 依赖 MFCore 运行时 */',
         '/* 用法：ctx.save(); draw(ctx, t, PARAMS, U); ctx.restore();',
         '   U = MFCore.createUtils({ W,H,D,t,accent,accent2,ink,bg1,bg2,bgMode,seed }) */',
         'const PARAMS = ' + JSON.stringify(rpD, null, 2) + ';',
@@ -1143,7 +1253,7 @@
     } else if (kind === 'fav-list') {
       var favs2 = MF.effects.filter(function (e) { return S.favorites.has(e.id); });
       if (!favs2.length) { toast('收藏夹还是空的 —— 先给喜欢的动效点收藏'); return; }
-      var md = '# 我的收藏集 · 嘉Jaykou动效工作台\n\n' + favs2.map(function (e, i) {
+      var md = '# 我的收藏集 · 嘉Jaykou动效库\n\n' + favs2.map(function (e, i) {
         return (i + 1) + '. **' + e.name + '**（' + e.cat + ' · ' + e.dur + 's）— ' + e.desc;
       }).join('\n') + '\n';
       copyText(md, '收藏清单已复制（Markdown，' + favs2.length + ' 条）');
@@ -1196,6 +1306,116 @@
     touchVis = [];
   }
 
+  /* ══════════════════ 视频风格板块（视觉合同来自 codex 剪辑工作台） ══════════════════ */
+  var stylePick = (MF.VIDEO_STYLES && MF.VIDEO_STYLES[0]) ? MF.VIDEO_STYLES[0].id : null;
+
+  function stylesOpen() { var el = $('#styles'); return !!el && !el.hidden; }
+
+  function openStyles(id) {
+    if (id) stylePick = id;
+    if (S.browserOpen) closeBrowser();
+    $('#styles').hidden = false;
+    buildStyleTabs();
+    renderStyle();
+    $('#styles').scrollTop = 0;
+  }
+  function closeStyles() { $('#styles').hidden = true; }
+
+  function buildStyleTabs() {
+    var wrap = $('#style-tabs');
+    if (!wrap || wrap.dataset.built) return;
+    wrap.dataset.built = '1';
+    wrap.innerHTML = '';
+    MF.VIDEO_STYLES.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'st-tab' + (s.id === stylePick ? ' active' : '');
+      b.dataset.style = s.id;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', String(s.id === stylePick));
+      b.innerHTML = '<b>' + esc(s.name) + '<span class="st-badge">' + esc(s.badge) + '</span></b>' +
+        '<em>' + esc(s.tagline) + '</em>' +
+        '<span class="st-en">' + esc(s.en) + ' · ' + esc(s.ver) + '</span>';
+      b.addEventListener('click', function () { selectStyle(s.id); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function selectStyle(id) {
+    stylePick = id;
+    $$('#style-tabs .st-tab').forEach(function (b) {
+      var on = b.dataset.style === id;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    renderStyle();
+    $('#styles').scrollTop = 0;
+  }
+
+  function renderStyle() {
+    var s = MF.vsStyle(stylePick);
+    if (!s) return;
+
+    $('#style-info').innerHTML =
+      '<div class="vi-block">' +
+        '<div class="vi-name">' + esc(s.name) + '</div>' +
+        '<div class="vi-en">' + esc(s.en) + '</div>' +
+        '<div class="vi-tagline">' + esc(s.tagline) + '</div>' +
+        '<div class="vi-desc">' + esc(s.desc) + '</div>' +
+        '<div class="vi-vibe">' + (s.vibe || []).map(function (v) { return '<span>' + esc(v) + '</span>'; }).join('') + '</div>' +
+      '</div>' +
+      '<div class="vi-block"><h4>配色系统</h4><div class="vi-sw">' +
+        s.tokens.map(function (t) {
+          return '<div class="sw" title="' + esc(t.d) + '"><i style="background:' + esc(t.v) + '"></i>' +
+            '<span><b>' + esc(t.n) + '</b><code>' + esc(t.v) + '</code></span></div>';
+        }).join('') +
+      '</div></div>' +
+      '<div class="vi-block"><h4>语义规则</h4><ul class="vi-list vi-sem">' +
+        (s.semantics || []).map(function (r) {
+          return '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>';
+        }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>字体</h4><div class="vi-font">' + esc(s.font) + '</div></div>' +
+      '<div class="vi-block"><h4>面板材质</h4><div class="vi-font">' + esc(s.panel) + '</div></div>' +
+      '<div class="vi-block"><h4>硬规则</h4><ul class="vi-list vi-ok">' +
+        s.rules.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>禁止方向</h4><ul class="vi-list vi-no">' +
+        s.banned.map(function (r) { return '<li>' + esc(r) + '</li>'; }).join('') +
+      '</ul></div>' +
+      '<div class="vi-block"><h4>画面比例与输出</h4><ul class="vi-list vi-spec">' +
+        s.spec.map(function (r) { return '<li><b>' + esc(r[0]) + '</b><span>' + esc(r[1]) + '</span></li>'; }).join('') +
+      '</ul></div>';
+
+    /* 固定案例模板（预览 == 导出，同一份 HTML/CSS） */
+    MF.vsMount($('#tpl-video-wrap'), s.id, 'video');
+    MF.vsMount($('#tpl-cover-wrap'), s.id, 'cover');
+    var st = $('#style-count');
+    if (st) st.textContent = MF.VIDEO_STYLES.length;
+  }
+
+  function bindStyleActions() {
+    var host = $('#styles');
+    if (!host) return;
+    host.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.tpl-actions button') : null;
+      if (!b) return;
+      var kind = b.dataset.kind === 'cover' ? 'cover' : 'video';
+      var act = b.dataset.tpl;
+      if (act === 'html') {
+        if (MF.vsDownloadHTML(stylePick, kind)) toast('已下载模板 HTML · 双击即可打开');
+      } else if (act === 'png') {
+        toast('正在生成 PNG…');
+        MF.vsExportPNG(stylePick, kind, function (ok) {
+          toast(ok ? 'PNG 已导出 ' + (kind === 'cover' ? '1536×2048' : '1920×1080')
+                   : 'PNG 导出失败：请改用「下载 HTML 模板」后截图');
+        });
+      } else if (act === 'copy') {
+        copyText(MF.vsStandalone(stylePick, kind), '模板 HTML 源码已复制');
+      }
+    });
+  }
+
   /* ══════════════════ 事件绑定 ══════════════════ */
   function bind() {
     /* 比例 */
@@ -1223,8 +1443,11 @@
       var v = this.value;
       clearTimeout(searchTimer);
       searchTimer = setTimeout(function () {
-        S.filter.q = v.trim(); S.filter.tag = null;
-        buildCards();
+        S.filter.q = v.trim();
+        /* 搜索框在顶栏 = 全库搜索：必须清掉分类/细类/标签，
+           否则「在大类里搜另一个类的东西」会得到 0 结果却看不出原因 */
+        if (S.filter.q) { S.filter.cat = null; S.filter.sub = null; S.filter.tag = null; }
+        buildCategories(); buildCards();
         openBrowser();
       }, 160);
     });
@@ -1399,6 +1622,12 @@
       buildCategories(); syncTabs(); buildCards();
     });
 
+    /* 视频风格板块 */
+    $('#styles-open').addEventListener('click', function () { openStyles(); });
+    $('#styles-back').addEventListener('click', closeStyles);
+    $('#styles-close').addEventListener('click', closeStyles);
+    bindStyleActions();
+
     /* 弹窗 */
     $('#help-open').addEventListener('click', function () { $('#help-modal').hidden = false; });
     $('#help-close').addEventListener('click', function () { $('#help-modal').hidden = true; });
@@ -1418,6 +1647,7 @@
       if (e.key === 'Escape') {
         if (!$('#help-modal').hidden) { $('#help-modal').hidden = true; return; }
         if (!$('#script-modal').hidden) { $('#script-modal').hidden = true; return; }
+        if (stylesOpen()) { closeStyles(); return; }
         if (S.browserOpen) closeBrowser();
         return;
       }
@@ -1428,6 +1658,7 @@
       else if (e.key === 'ArrowLeft') { $('#prev-frame').click(); }
       else if (e.key === 'ArrowRight') { $('#next-frame').click(); }
       else if (e.key === 'b' || e.key === 'B') { S.browserOpen ? closeBrowser() : openBrowser(); }
+      else if (e.key === 'v' || e.key === 'V') { stylesOpen() ? closeStyles() : openStyles(); }
       else if (e.key === 'f' || e.key === 'F') { if (S.current) $('#fav-current').click(); }
       else if (e.key === 't' || e.key === 'T') { $('#theme-toggle').click(); }
       else if (e.key === '[' || e.key === ']') {
@@ -1473,31 +1704,32 @@
   }
 
   /* ══════════════════ 口播稿推荐（本地规则引擎） ══════════════════ */
+  /* cats 里可以写大类，也可以写细类（analyzeScript 两个维度都匹配） */
   var SCRIPT_RULES = [
     { phase: '开场', label: '开场问候', kws: ['大家好', '欢迎', '哈喽', 'hello', 'hi', '开场', '这期', '今天', '来了', '你们好'],
-      cats: ['入场与反馈', '入场序列', '文字与排版'], tags: ['入场', '标题'] },
+      cats: ['入场序列', '文字特效', '遮罩与跑马灯'], tags: ['入场', '标题'] },
     { phase: '要点', label: '数据呈现', kws: ['数据', '增长', '%', '百分之', '占比', '统计', '报表', '营收', '销量', '用户', '市场规模', '提升', '下降', '对比', '万', '亿'],
-      cats: ['数据可视化', '数据图表', '数据大屏', '数字计数', '对比展示', 'HUD 仪表'], tags: ['数据', '图表', '计数'] },
+      cats: ['统计图表', '数据图表', '数据大屏', '数字计数', '对比展示', 'HUD 仪表', '时间轴'], tags: ['数据', '图表', '计数'] },
     { phase: '要点', label: '科技 / AI', kws: ['ai', '科技', '智能', '算法', '模型', '未来', '创新', '技术', '自动化', '机器人', '数字化'],
-      cats: ['几何与抽象', '粒子与反馈', '粒子系统', '3D 立体', '光影氛围', '终端代码', '几何构成'], tags: ['科技', '粒子', '抽象'] },
+      cats: ['几何与抽象', '粒子系统', '3D 立体', '光影氛围', '终端代码', '几何构成'], tags: ['科技', '粒子', '抽象'] },
     { phase: '要点', label: '重点强调', kws: ['重点', '关键', '注意', '核心', '记住', '划重点', '千万别', '一定要', '敲黑板', '秘诀'],
-      cats: ['文字特效', '状态与进度', '几何构成'], tags: ['强调', '标题', '高亮'] },
+      cats: ['文字特效', '加载与进度', '几何构成'], tags: ['强调', '标题', '高亮'] },
     { phase: '要点', label: '流程步骤', kws: ['第一步', '第二步', '步骤', '流程', '然后', '接着', '方法', '怎么', '如何', '教程', '攻略'],
-      cats: ['时间轴', '状态与进度', '办公效率', '叙事与演示', '加载与进度'], tags: ['步骤', '流程', '时间'] },
+      cats: ['时间轴', '加载与进度', '办公效率', '叙事与演示'], tags: ['步骤', '流程', '时间'] },
     { phase: '要点', label: '产品展示', kws: ['产品', '实物', '开箱', '展示', '设计', '作品', '房子', '室内', '颜值', '质感'],
-      cats: ['空间与展示', '交互与卡片', '材质与纹理', '界面组件'], tags: ['展示', '3d'] },
+      cats: ['空间与展示', '材质与纹理', '界面组件'], tags: ['展示', '3d'] },
     { phase: '要点', label: '地点行程', kws: ['城市', '国家', '旅行', '路线', '地图', '出发', '到达', '距离', '打卡'],
       cats: ['地图轨迹'], tags: ['地图', '轨迹'] },
     { phase: '要点', label: '情绪氛围', kws: ['温暖', '治愈', '浪漫', '氛围', '心情', '感受', '安静', '放松', '音乐', '节奏'],
-      cats: ['光影氛围', '天气氛围', '创意生活', '音乐律动', '涂鸦手绘'], tags: ['氛围', '光影'] },
+      cats: ['光影氛围', '天气氛围', '物理机关', '音乐律动', '涂鸦手绘'], tags: ['氛围', '光影'] },
     { phase: '要点', label: '剧情字幕', kws: ['说', '台词', '字幕', '弹幕', '吐槽', '聊天', '对话', '采访'],
       cats: ['弹幕字幕', '社交叙事'], tags: ['字幕', '弹幕'] },
     { phase: '收尾', label: '行动号召', kws: ['点赞', '关注', '订阅', '评论', '转发', '分享', '下期', '拜拜', '再见', '别忘了', '粉丝'],
-      cats: ['社交叙事', '退场收尾'], tags: ['社交', '互动'] },
+      cats: ['社交叙事', '退场收尾', '操作反馈'], tags: ['社交', '互动'] },
     { phase: '收尾', label: '品牌收尾', kws: ['品牌', 'logo', '官方', '出品', '合作', '联系方式', '官网'],
       cats: ['品牌与标识', '退场收尾'], tags: ['logo', '品牌'] },
     { phase: '转场', label: '转场过渡', kws: ['接下来', '另一个', '说到', '切换', '换一个', '转入', ' meanwhile'],
-      cats: ['转场切换', '镜头与转场', '镜头运动', '形变转换'], tags: ['转场'] }
+      cats: ['转场切换', '镜头运动', '形变转换'], tags: ['转场'] }
   ];
 
   function analyzeScript(text) {
@@ -1512,7 +1744,8 @@
     hits.forEach(function (h) {
       var scored = [];
       MF.effects.forEach(function (e) {
-        var aff = h.rule.cats.indexOf(e.cat) >= 0 ? 3 : 0;
+        /* 大类与细类都匹配：只比 e.cat 时，规则里写的细类名会全部落空 */
+        var aff = (h.rule.cats.indexOf(e.cat) >= 0 || h.rule.cats.indexOf(e.sub) >= 0) ? 3 : 0;
         var tg = e.tags || [];
         for (var i = 0; i < h.rule.tags.length; i++) {
           if (tg.indexOf(h.rule.tags[i]) >= 0) { aff += 1.5; break; }

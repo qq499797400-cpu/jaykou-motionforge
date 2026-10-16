@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>嘉Jaykou动效工作台</title>
-<meta name="description" content="嘉Jaykou动效工作台 —— 468 个动效在线可调、可导出 GIF/MP4/HTML/React，参数实时联动。">
-<meta name="keywords" content="动效,动画,Canvas,GIF导出,MP4导出,动效库,嘉Jaykou,.motion lab">
+<title>嘉Jaykou动效库</title>
+<meta name="description" content="嘉Jaykou动效库 —— 468 个动效在线可调、可导出 GIF/MP4/HTML/React，另附两套认知视频固定案例模板（黑曜玻璃 / 黑金商业档案）。">
+<meta name="keywords" content="动效,动画,Canvas,GIF导出,MP4导出,动效库,视频风格,黑曜玻璃,黑金商业档案,嘉Jaykou">
 <meta name="theme-color" content="#0D0F17">
 <!-- 防首屏主题闪烁（FOUC）：HTML 硬编码 light，dark 用户首绘会先闪浅色。
      这段内联脚本在任何绘制发生前同步读偏好，实测录屏前三帧全部是 dark -->
@@ -19,12 +19,12 @@ try {
 <!-- 社交分享卡片（og:image 必须绝对 URL，相对路径微信/Twitter 抓不到图） -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://qq499797400-cpu.github.io/jaykou-motionforge/">
-<meta property="og:title" content="嘉Jaykou动效工作台 · 468 个可调可导出的动效">
-<meta property="og:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件。">
+<meta property="og:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
+<meta property="og:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
 <meta property="og:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="嘉Jaykou动效工作台 · 468 个可调可导出的动效">
-<meta name="twitter:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件。">
+<meta name="twitter:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
+<meta name="twitter:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
 <meta name="twitter:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -32,8 +32,8 @@ try {
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%23FF5A1F' stroke-width='8'/><path d='M58 22 L36 54 L50 54 L42 80 L64 46 L50 46 Z' fill='%23fff'/></svg>">
 <!-- ⚠️ preload 的 URL 必须与下方 <script> 完全一致（含 ?v=），
      否则浏览器视作两个资源，1MB 的 bundle 会被下载两次 -->
-<link rel="preload" href="assets/js/bundle.js?v=20261016g" as="script">
-<link rel="stylesheet" href="assets/css/app.css?v=20261016h">
+<link rel="preload" href="assets/js/bundle.js?v=20261016l" as="script">
+<link rel="stylesheet" href="assets/css/app.css?v=20261016m">
 </head>
 <body>
 
@@ -51,7 +51,7 @@ try {
       </svg>
       <span class="brand-text">
         <strong>嘉Jaykou</strong>
-        <em>动效工作台</em>
+        <em>动效库</em>
       </span>
     </a>
 
@@ -74,6 +74,10 @@ try {
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>
         动效库
       </button>
+      <button class="ghost-btn" id="styles-open" title="认知视频的两套视觉风格与固定案例模板（按 V）">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="13" rx="2.4"/><path d="M2.5 9.5h19"/><path d="M8 21.5h8"/><path d="M12 18v3.5"/></svg>
+        视频风格
+      </button>
       <button class="ghost-btn" id="help-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/><path d="M9 8h7"/></svg>使用方式</button>
       <button class="solid-btn" id="quick-export">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19h16"/></svg>
@@ -87,10 +91,8 @@ try {
     <!-- ══════════════════════ 左侧 · 动效库 ══════════════════════ -->
     <aside class="rail rail-left">
       <nav class="tabs" id="type-tabs" aria-label="按类型筛选">
-        <button class="tab active" data-type="all" title="全库 468 个 = 420 个整段动效 + 48 个界面组件动效"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
-        <button class="tab" data-type="block" title="只看完整段落动效（420 个）——适合直接引用或导出成片的成品"><svg viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12" rx="2.5"/><path d="M3.5 10h17"/></svg><span>Block 整段</span><em id="c-block">0</em></button>
-        <button class="tab" data-type="component" title="只看界面小组件动效（48 个）——通知横幅、卡片、消息气泡、星级评分这类可嵌进页面的单元"><svg viewBox="0 0 24 24"><path d="M9 9V6.5A1.5 1.5 0 0 1 10.5 5h7A1.5 1.5 0 0 1 19 6.5v7a1.5 1.5 0 0 1-1.5 1.5H15"/><rect x="5" y="9" width="10" height="10" rx="1.6"/></svg><span>Component 组件</span><em id="c-comp">0</em></button>
-        <button class="tab" data-type="fav"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>我的收藏</span><em id="c-fav">0</em></button>
+        <button class="tab active" data-type="all" title="全库 468 个动效，按 10 大类 → 细类逐级筛选"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
+        <button class="tab" data-type="fav" title="你收藏的动效，可一键导出成收藏集"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>我的收藏</span><em id="c-fav">0</em></button>
       </nav>
 
       <div class="rail-scroll">
@@ -353,7 +355,7 @@ try {
       <div class="browser-head">
         <div>
           <p class="eyebrow">MOTION COLLECTION</p>
-          <h2>全部动效 <span id="browse-count" class="count">0</span></h2>
+          <h2><span id="browse-title">全部动效</span> <span id="browse-count" class="count">0</span></h2>
           <p class="browser-desc">悬停即可实时预览，点击进入工作台调参与导出。</p>
         </div>
         <div class="browser-tools">
@@ -369,7 +371,10 @@ try {
           <button class="ghost-btn sm" id="browser-close">收起浏览</button>
         </div>
       </div>
+      <!-- 三级筛选：大类 → 细类 → 高频标签（后两行按需出现） -->
       <div class="browse-cats" id="browse-cats"></div>
+      <div class="browse-subs" id="browse-subs" hidden></div>
+      <div class="browse-tags" id="browse-tags" hidden></div>
     </div>
     <div class="card-grid" id="card-grid"></div>
     <div class="empty-state" id="empty-state" hidden>
@@ -379,13 +384,64 @@ try {
       <button class="ghost-btn" id="reset-filters">查看全部动效</button>
     </div>
   </section>
+
+  <!-- ══════════════════════ 视频风格（覆盖层 · 来自 codex 剪辑工作台的视觉合同） ══════════════════════ -->
+  <section class="vstyle" id="styles" hidden>
+    <div class="vstyle-top">
+      <button class="ghost-btn sm back-btn" id="styles-back" aria-label="返回工作台">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回工作台
+      </button>
+      <div class="vstyle-head">
+        <div>
+          <p class="eyebrow">VIDEO STYLE SYSTEM</p>
+          <h2>视频风格 <span id="style-count" class="count">2</span></h2>
+          <p class="vstyle-desc">来自 <b>codex 剪辑工作台</b>的两套正式视觉合同。每套都给出 <b>16:9 视频画面模板</b> 与 <b>3:4 封面模板</b>的固定案例 —— 配色、字体、圆角、禁用项全部按合同执行，可直接下载 HTML 或导出 PNG 当模板复用。</p>
+        </div>
+        <div class="vstyle-tools">
+          <span class="result-count" id="style-src">来源 · 认知翻倍视频剪辑工作台</span>
+          <button class="ghost-btn sm" id="styles-close">收起</button>
+        </div>
+      </div>
+      <div class="style-tabs" id="style-tabs" role="tablist" aria-label="选择视频风格"></div>
+    </div>
+
+    <div class="vstyle-body">
+      <aside class="vstyle-info" id="style-info"></aside>
+      <div class="vstyle-previews">
+        <figure class="tpl-card">
+          <figcaption>
+            <div class="tpl-title"><b>16:9 视频画面模板</b><em>1920×1080 预览 · 3840×2160 成片 · 30fps</em></div>
+            <div class="tpl-actions">
+              <button class="ghost-btn sm" data-tpl="html" data-kind="video">下载 HTML 模板</button>
+              <button class="ghost-btn sm" data-tpl="png" data-kind="video">导出 PNG</button>
+              <button class="ghost-btn sm" data-tpl="copy" data-kind="video">复制源码</button>
+            </div>
+          </figcaption>
+          <div class="tpl-wrap" id="tpl-video-wrap"></div>
+          <p class="tpl-note">顶部进度条 · 作者署名安全区 · 眉标 + 大字观点 + 副标题 · 右侧数据面板 · 底部字幕安全区（合同要求的关键帧都在这张里）</p>
+        </figure>
+        <figure class="tpl-card tpl-card--cover">
+          <figcaption>
+            <div class="tpl-title"><b>3:4 封面模板</b><em>1536×2048 · 抖音竖版封面</em></div>
+            <div class="tpl-actions">
+              <button class="ghost-btn sm" data-tpl="html" data-kind="cover">下载 HTML 模板</button>
+              <button class="ghost-btn sm" data-tpl="png" data-kind="cover">导出 PNG</button>
+              <button class="ghost-btn sm" data-tpl="copy" data-kind="cover">复制源码</button>
+            </div>
+          </figcaption>
+          <div class="tpl-wrap tpl-wrap--cover" id="tpl-cover-wrap"></div>
+          <p class="tpl-note">固定版式：顶部账号标签 + 中央骨白大标题（关键词高亮）+ 红色观点标签 + 金色标签 + 底部观点补充。只换文字，不改版式。</p>
+        </figure>
+      </div>
+    </div>
+  </section>
 </div>
 
 <!-- ══════════════════════ 使用方式 ══════════════════════ -->
 <div class="modal" id="help-modal" hidden>
   <div class="modal-card">
     <div class="modal-head">
-      <span class="modal-brand">嘉Jaykou动效工作台 / 使用方式</span>
+      <span class="modal-brand">嘉Jaykou动效库 / 使用方式</span>
       <button class="icon-btn" id="help-close" aria-label="关闭">✕</button>
     </div>
     <div class="modal-body">
@@ -407,7 +463,7 @@ try {
       </div>
       <p class="help-tip"><b>关键提醒：</b>AI 提示词不是"复制粘贴就能 100% 一样"——模型会重写实现，噪声、缓动、线条细节都会变。要原样复刻，请走<b>源码通道</b>（复制 draw 源码 / 单文件 HTML）；提示词的定位是"让 AI 照着我们的思路写，观感一致"。</p>
       <p class="help-tip">想连续播放多个动效？调好后点 <code>+ 加入当前动效</code> 组成场景序列，可整条录制导出。</p>
-      <p class="modal-note">快捷键：空格 播放/暂停 · R 重播 · ←/→ 逐帧 · [ ] 上/下一个动效 · L 循环 · F 收藏 · T 明暗主题 · / 搜索 · 1/2/3 切换右侧面板 · B 展开浏览 · 复制地址栏链接可分享当前动效<br><a href="guide.html" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">打开完整图文教程 guide.html →</a></p>
+      <p class="modal-note">快捷键：空格 播放/暂停 · R 重播 · ←/→ 逐帧 · [ ] 上/下一个动效 · L 循环 · F 收藏 · T 明暗主题 · <b>V 视频风格</b> · B 展开动效库 · / 搜索 · 1/2/3 切换右侧面板 · 复制地址栏链接可分享当前动效<br><a href="guide.html" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">打开完整图文教程 guide.html →</a></p>
     </div>
   </div>
 </div>
@@ -429,7 +485,7 @@ try {
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script defer src="assets/js/bundle.js?v=20261016g"></script>
+<script defer src="assets/js/bundle.js?v=20261016l"></script>
 <script>
 /* Service Worker：离线可访问（仅 https/localhost 生效）
    ?v=3 让脚本 URL 变化，强制替换掉 v2 那版会让刷新 ERR_FAILED 的旧 SW；

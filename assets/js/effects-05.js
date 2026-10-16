@@ -161,7 +161,7 @@
       { id: 'enter-chip-slide', name: '标签滑入', tags: ['标签', '横向'], desc: '胶囊从左侧滑入，适合多个标签依次登场的场景。', cfg: { shape: 'chip', text: '限时特惠', dir: 'left', glow: 0.5 } },
       { id: 'enter-chip-elastic', name: '标签弹跳', tags: ['标签', '弹性'], desc: '胶囊带弹性落地，适合促销标签与徽章。', cfg: { shape: 'chip', text: 'HOT', dir: 'down', curve: 'outBounce', glow: 0.7 } },
       { id: 'enter-chip-focus', name: '标签聚焦', tags: ['标签', '虚化'], desc: '胶囊从虚化中清晰，适合需要质感的品牌露出。', cfg: { shape: 'chip', text: 'PREMIUM', dir: 'blur', blurAmt: 24, glow: 0.8 } },
-      { id: 'enter-title-up', name: '标题组升起', tags: ['标题', '开场'], desc: '标题、下划线、副标题依次升起，是标准的开场版式。', cfg: { shape: 'title', text: '让画面动起来', sub: '嘉Jaykou动效工作台', dir: 'up', size: 229 } },
+      { id: 'enter-title-up', name: '标题组升起', tags: ['标题', '开场'], desc: '标题、下划线、副标题依次升起，是标准的开场版式。', cfg: { shape: 'title', text: '让画面动起来', sub: '嘉Jaykou动效库', dir: 'up', size: 229 } },
       { id: 'enter-title-blur', name: '标题组聚焦', tags: ['标题', '虚化'], desc: '标题从模糊中显影，副标题随后淡入，情绪更沉稳。', cfg: { shape: 'title', text: 'Design in Motion', sub: '视觉表达 · 一次说清', dir: 'blur', blurAmt: 26, size: 211 } },
       { id: 'enter-title-scale', name: '标题组缩放', tags: ['标题', '聚焦'], desc: '标题由小放大到正位，强调感强，适合结论页。', cfg: { shape: 'title', text: '增长 237%', sub: '同比去年 · 全渠道', dir: 'scale', size: 118 } },
       { id: 'enter-title-flip', name: '标题组翻转', tags: ['标题', '立体'], desc: '标题翻面展开，带轻微透视，适合新品发布。', cfg: { shape: 'title', text: 'NEW ARRIVAL', sub: '2026 秋冬系列', dir: 'flip', size: 100 } },

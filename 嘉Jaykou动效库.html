@@ -1,0 +1,507 @@
+<!-- 由 tools/build-bundle.py 自动生成，内容与 index.html 逐字节相同。
+     请勿直接编辑本文件 —— 改动会写进 index.html 里，然后重跑 build-bundle.py。 -->
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>嘉Jaykou动效库</title>
+<meta name="description" content="嘉Jaykou动效库 —— 468 个动效在线可调、可导出 GIF/MP4/HTML/React，另附两套认知视频固定案例模板（黑曜玻璃 / 黑金商业档案）。">
+<meta name="keywords" content="动效,动画,Canvas,GIF导出,MP4导出,动效库,视频风格,黑曜玻璃,黑金商业档案,嘉Jaykou">
+<meta name="theme-color" content="#0D0F17">
+<!-- 防首屏主题闪烁（FOUC）：HTML 硬编码 light，dark 用户首绘会先闪浅色。
+     这段内联脚本在任何绘制发生前同步读偏好，实测录屏前三帧全部是 dark -->
+<script>
+try {
+  if (JSON.parse(localStorage.getItem('motionforge.v1') || '{}').theme === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+  }
+} catch (e) {}
+</script>
+<!-- 社交分享卡片（og:image 必须绝对 URL，相对路径微信/Twitter 抓不到图） -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://qq499797400-cpu.github.io/jaykou-motionforge/">
+<meta property="og:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
+<meta property="og:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
+<meta property="og:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
+<meta name="twitter:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
+<meta name="twitter:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%23FF5A1F' stroke-width='8'/><path d='M58 22 L36 54 L50 54 L42 80 L64 46 L50 46 Z' fill='%23fff'/></svg>">
+<!-- ⚠️ preload 的 URL 必须与下方 <script> 完全一致（含 ?v=），
+     否则浏览器视作两个资源，1MB 的 bundle 会被下载两次 -->
+<link rel="preload" href="assets/js/bundle.js?v=20261016l" as="script">
+<link rel="stylesheet" href="assets/css/app.css?v=20261016m">
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true"><i class="bb1"></i><i class="bb2"></i><i class="bb3"></i><i class="bb4"></i></div>
+
+<div class="app">
+
+  <!-- ══════════════════════ 顶栏 ══════════════════════ -->
+  <header class="topbar">
+    <a class="brand" href="#" id="brand-home" title="返回全部动效">
+      <svg class="brand-mark" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"
+                stroke-dasharray="251" stroke-dashoffset="0"/>
+        <path d="M57 24 L37 54 L49 54 L43 78 L63 46 L51 46 Z" fill="var(--accent)"/>
+      </svg>
+      <span class="brand-text">
+        <strong>嘉Jaykou</strong>
+        <em>动效库</em>
+      </span>
+    </a>
+
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+      <input id="search" type="search" placeholder="搜索动效、场景或关键词（按 / 聚焦）" autocomplete="off" spellcheck="false">
+      <kbd>/</kbd>
+    </label>
+
+    <div class="topbar-actions">
+      <label class="field compact" title="画布比例">
+        <span>画布</span>
+        <select id="ratio"></select>
+      </label>
+      <button class="icon-btn" id="theme-toggle" title="切换明暗主题" aria-label="切换主题">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="i-sun"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="i-moon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+      <button class="ghost-btn" id="lib-open">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>
+        动效库
+      </button>
+      <button class="ghost-btn" id="styles-open" title="认知视频的两套视觉风格与固定案例模板（按 V）">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="13" rx="2.4"/><path d="M2.5 9.5h19"/><path d="M8 21.5h8"/><path d="M12 18v3.5"/></svg>
+        视频风格
+      </button>
+      <button class="ghost-btn" id="help-open"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5v-15Z"/><path d="M4 20.5A2.5 2.5 0 0 1 6.5 18H20v3H6.5"/><path d="M9 8h7"/></svg>使用方式</button>
+      <button class="solid-btn" id="quick-export">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 19h16"/></svg>
+        导出
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ══════════════════════ 左侧 · 动效库 ══════════════════════ -->
+    <aside class="rail rail-left">
+      <nav class="tabs" id="type-tabs" aria-label="按类型筛选">
+        <button class="tab active" data-type="all" title="全库 468 个动效，按 10 大类 → 细类逐级筛选"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
+        <button class="tab" data-type="fav" title="你收藏的动效，可一键导出成收藏集"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>我的收藏</span><em id="c-fav">0</em></button>
+      </nav>
+
+      <div class="rail-scroll">
+        <p class="rail-label">按分类浏览 <span>CATEGORIES</span></p>
+        <div class="cat-list" id="cat-list"></div>
+
+        <p class="rail-label">最近使用 <span>RECENT</span></p>
+        <div class="cat-list" id="recent-list">
+          <p class="empty-hint" id="recent-empty">还没有使用记录</p>
+        </div>
+      </div>
+
+      <div class="rail-foot">
+        <span class="dot-live"></span>
+        <span id="lib-stat">正在载入动效库…</span>
+      </div>
+    </aside>
+
+    <!-- ══════════════════════ 中间 · 舞台 ══════════════════════ -->
+    <main class="stage-col">
+      <div class="stage-head">
+        <div class="stage-title">
+          <span class="badge" id="cur-type">BLOCK</span>
+          <h1 id="cur-name">—</h1>
+          <span class="chip" id="cur-cat">—</span>
+          <span class="chip mono" id="cur-dur">—</span>
+        </div>
+        <div class="stage-head-actions">
+          <button class="ghost-btn sm" id="fav-current">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v17l-6-4-6 4z"/></svg>
+            <span>收藏</span>
+          </button>
+          <button class="ghost-btn sm" id="share-current">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>
+            <span>分享链接</span>
+          </button>
+          <button class="ghost-btn sm" id="random-effect" title="随机动效 + 随机参数 + 随机配色，一键出片">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.6" cy="8.6" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.4" cy="15.4" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.4" cy="8.6" r="1.4" fill="currentColor" stroke="none"/><circle cx="8.6" cy="15.4" r="1.4" fill="currentColor" stroke="none"/></svg>
+            <span>手气不错</span>
+          </button>
+          <button class="ghost-btn sm" id="script-rec" title="粘贴口播稿，自动推荐适合的动效">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 10h10M4 15h13M4 20h7"/><circle cx="18.5" cy="16.5" r="3.2"/><path d="m21 19 1.6 1.6"/></svg>
+            <span>口播稿推荐</span>
+          </button>
+          <button class="ghost-btn sm" id="randomize">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h4l10 10h4M3 17h4l3-3M14 7h7m0 0-3-3m3 3-3 3M17 17h4m0 0-3-3m3 3-3 3"/></svg>
+            <span>随机参数</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="stage-frame" id="stage-frame">
+        <canvas id="cv"></canvas>
+        <div class="stage-tag"><span class="dot-live"></span><span id="stage-mode">实时渲染 · 非录制视频</span></div>
+      </div>
+
+      <div class="transport">
+        <div class="tp-group">
+          <button class="icon-btn lg" id="play" title="播放 / 暂停（空格）" aria-label="播放或暂停">
+            <svg viewBox="0 0 24 24" id="play-icon"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>
+          </button>
+          <button class="icon-btn" id="restart" title="从头播放（R）" aria-label="从头播放">
+            <svg viewBox="0 0 24 24"><path d="M4 4v6h6"/><path d="M4.5 10a8 8 0 1 1 1 8"/></svg>
+          </button>
+          <button class="icon-btn" id="prev-frame" title="后退一帧（←）" aria-label="后退一帧"><svg viewBox="0 0 24 24"><path d="M14 6 8 12l6 6"/></svg></button>
+          <button class="icon-btn" id="next-frame" title="前进一帧（→）" aria-label="前进一帧"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
+          <button class="icon-btn" id="loop" title="循环播放（L）" aria-label="循环播放" aria-pressed="true"><svg viewBox="0 0 24 24"><path d="M4 9V7a3 3 0 0 1 3-3h10l-2.5-2.5M20 15v2a3 3 0 0 1-3 3H7l2.5 2.5M20 9 17.5 6.5M4 15l2.5 2.5"/></svg></button>
+        </div>
+
+        <div class="tp-scrub">
+          <input id="scrub" type="range" min="0" max="1000" value="0" step="1" aria-label="时间轴">
+          <div class="tp-ticks" id="tp-ticks"></div>
+        </div>
+
+        <div class="tp-group">
+          <span class="time-read"><b id="t-now">0.00</b> / <span id="t-total">6.00</span>s</span>
+          <label class="field compact" title="播放速度">
+            <select id="speed">
+              <option value="0.25">0.25×</option>
+              <option value="0.5">0.5×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.5">1.5×</option>
+              <option value="2">2×</option>
+            </select>
+          </label>
+          <label class="field compact" title="时长（秒）">
+            <span>时长</span>
+            <input id="dur-input" type="number" min="1" max="60" step="0.5" value="6">
+          </label>
+        </div>
+      </div>
+
+      <!-- 场景序列 -->
+      <div class="scenes">
+        <div class="scenes-head">
+          <p class="rail-label">场景序列 <span>SEQUENCE · 把多个动效串成一条片</span></p>
+          <div class="scenes-actions">
+            <button class="ghost-btn sm" id="scene-add">+ 加入当前动效</button>
+            <button class="ghost-btn sm" id="scene-play">播放全序列</button>
+            <button class="ghost-btn sm" id="scene-clear">清空</button>
+          </div>
+        </div>
+        <div class="scene-track" id="scene-track">
+          <p class="empty-hint">序列为空 —— 调好参数后点「加入当前动效」，即可串联成一条连续短片。</p>
+        </div>
+        <p class="scene-meta" id="scene-meta"></p>
+      </div>
+    </main>
+
+    <!-- ══════════════════════ 右侧 · 检查器 ══════════════════════ -->
+    <aside class="rail rail-right">
+      <nav class="tabs tabs-3" id="insp-tabs">
+        <button class="tab active" data-panel="params"><svg viewBox="0 0 24 24"><path d="M4 7h9m4 0h3M4 12h3m4 0h9M4 17h11m4 0h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>参数</span></button>
+        <button class="tab" data-panel="theme"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.8a2.2 2.2 0 0 0 0-4.4H13a2 2 0 0 1 0-4h4.5A3.5 3.5 0 0 0 21 9.1C20.4 5.6 16.6 3 12 3Z"/><circle cx="8" cy="9" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7" r="1.1" fill="currentColor" stroke="none"/><circle cx="7" cy="13.5" r="1.1" fill="currentColor" stroke="none"/></svg><span>配色背景</span></button>
+        <button class="tab" data-panel="export"><svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg><span>导出</span></button>
+      </nav>
+
+      <div class="rail-scroll">
+        <!-- 参数面板 -->
+        <section class="panel" id="panel-params">
+          <p class="panel-desc" id="cur-desc"></p>
+          <div id="param-list" class="param-list"></div>
+          <div class="param-foot">
+            <button class="ghost-btn sm" id="param-reset">恢复默认</button>
+            <button class="ghost-btn sm" id="param-random">随机化</button>
+          </div>
+          <div class="tags-box" id="cur-tags"></div>
+          <p class="rail-label">给 AI 的提示词 <span>AI PROMPT</span></p>
+          <div class="seg" id="prompt-mode" role="tablist" aria-label="提示词模式">
+            <button class="seg-item" data-mode="desc">描述版</button>
+            <button class="seg-item" data-mode="skel">骨架版</button>
+            <button class="seg-item active" data-mode="src">源码版</button>
+          </div>
+          <p class="panel-note" id="prompt-hint"></p>
+          <pre class="prompt-box" id="prompt-box" tabindex="0"></pre>
+          <div class="param-foot">
+            <button class="ghost-btn sm prompt-copy" id="prompt-copy"><span id="prompt-copy-label">复制移植提示词</span></button>
+          </div>
+          <button class="ghost-btn sm src-copy" id="copy-src">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9V5.5A1.5 1.5 0 0 1 10.5 4h8A1.5 1.5 0 0 1 20 5.5v8a1.5 1.5 0 0 1-1.5 1.5H15"/><rect x="4" y="9" width="11" height="11" rx="1.6"/></svg>
+            <span>复制完整源码（100% 一致）</span>
+          </button>
+          <a class="guide-link" href="guide.html" target="_blank" rel="noopener">
+            <span>不确定选哪种？看完整教程与对照表</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </section>
+
+        <!-- 配色背景 -->
+        <section class="panel" id="panel-theme" hidden>
+          <p class="rail-label">主题预设 <span>PRESETS</span></p>
+          <div class="preset-grid" id="presets"></div>
+          <div class="color-row"><span>主色</span><input type="color" id="c-accent" aria-label="主色"><code id="v-accent"></code></div>
+          <div class="color-row"><span>辅助色</span><input type="color" id="c-accent2" aria-label="辅助色"><code id="v-accent2"></code></div>
+          <div class="color-row"><span>文字色</span><input type="color" id="c-ink" aria-label="文字色"><code id="v-ink"></code></div>
+          <div class="color-row"><span>背景深</span><input type="color" id="c-bg1" aria-label="背景深色"><code id="v-bg1"></code></div>
+          <div class="color-row"><span>背景浅</span><input type="color" id="c-bg2" aria-label="背景浅色"><code id="v-bg2"></code></div>
+          <label class="field"><span>背景模式</span>
+            <select id="bg-mode">
+              <option value="gradient">渐变光晕</option>
+              <option value="radial">径向聚焦</option>
+              <option value="grid">网格</option>
+              <option value="solid">纯色</option>
+              <option value="transparent">透明（叠加用）</option>
+            </select>
+          </label>
+          <label class="field"><span>随机种子 <b id="v-seed">7</b></span>
+            <input type="range" id="seed" min="0" max="99" step="1" value="7">
+          </label>
+          <p class="panel-note">随机种子决定所有「随机」元素的固定形态 —— 换个种子，同一个动效会变成另一种样子，但拖时间轴时画面不会乱跳。</p>
+        </section>
+
+        <!-- 导出 -->
+        <section class="panel" id="panel-export" hidden>
+          <p class="rail-label">导出当前动效 <span>EXPORT</span></p>
+          <div class="export-list">
+            <button class="export-item" data-export="html">
+              <b>单文件 HTML</b><em>一个文件，双击即播，可嵌入任何网站</em>
+            </button>
+            <button class="export-item" data-export="video">
+              <b>录制视频（MP4 / WebM）</b><em>录制一整轮循环，优先 MP4(H.264)，可直接剪进视频</em>
+            </button>
+            <button class="export-item" data-export="mp4">
+              <b>仅录制 MP4</b><em>H.264 编码，微信 / 剪映 / 抖音直接用（浏览器不支持时自动回退 WebM）</em>
+            </button>
+            <button class="export-item" data-export="gif">
+              <b>导出 GIF 动图</b><em>逐帧渲染编码，公众号 / 小红书即贴即用</em>
+            </button>
+            <div class="gif-opts">
+              <span>GIF 宽度</span>
+              <select id="gif-size" aria-label="GIF 宽度">
+                <option value="360">360px（轻量）</option>
+                <option value="480">480px</option>
+                <option value="640" selected>640px（推荐）</option>
+                <option value="800">800px</option>
+                <option value="1080">1080px（高清，较慢）</option>
+              </select>
+              <span>帧率</span>
+              <select id="gif-fps" aria-label="GIF 帧率">
+                <option value="8">8 fps</option>
+                <option value="10">10 fps</option>
+                <option value="12" selected>12 fps</option>
+                <option value="16">16 fps</option>
+                <option value="20">20 fps</option>
+              </select>
+            </div>
+            <button class="export-item" data-export="png">
+              <b>保存当前帧 PNG</b><em>把时间轴停在任意一帧，导出封面图</em>
+            </button>
+            <button class="export-item" data-export="copy-html">
+              <b>复制单文件 HTML 源码</b><em>100% 一致 —— 粘贴保存即为同款，双击就播</em>
+            </button>
+            <button class="export-item" data-export="copy-draw">
+              <b>复制 draw 源码</b><em>只要绘制函数，贴进你自己已有的 canvas 项目</em>
+            </button>
+            <button class="export-item" data-export="react">
+              <b>复制 React 组件</b><em>粘贴进项目即可使用，无第三方依赖</em>
+            </button>
+            <button class="export-item" data-export="embed">
+              <b>复制嵌入代码</b><em>iframe 一行嵌入，适配响应式布局</em>
+            </button>
+            <button class="export-item" data-export="prompt">
+              <b>复制 AI 提示词</b><em>给 AI 生成参考实现（观感接近）；要逐像素一致请用上方「复制源码」</em>
+            </button>
+            <button class="export-item" data-export="share">
+              <b>复制分享链接</b><em>带上完整参数，发给别人打开即所见</em>
+            </button>
+          </div>
+          <div class="record-status" id="record-status" hidden>
+            <div class="bar"><i id="record-bar"></i></div>
+            <span id="record-text">正在录制…</span>
+          </div>
+          <p class="rail-label">整条序列 <span>SEQUENCE EXPORT</span></p>
+          <button class="export-item wide" data-export="sequence">
+            <b>录制裁剪好的整条序列</b><em id="seq-hint">序列为空</em>
+          </button>
+          <p class="rail-label">我的收藏 <span>FAVORITES</span></p>
+          <div class="seg" id="fav-theme-row" role="radiogroup" aria-label="收藏集版式">
+            <button class="seg-item active" data-fav-theme="dark" type="button">深色画廊</button>
+            <button class="seg-item" data-fav-theme="light" type="button">浅色画廊</button>
+          </div>
+          <button class="export-item" data-export="fav-html">
+            <b>导出收藏集（单文件 HTML）</b><em>所有收藏动效在一个页面里实时动画，可直接分享打开</em>
+          </button>
+          <button class="export-item" data-export="fav-list">
+            <b>复制收藏清单</b><em>Markdown 格式清单，发群里 or 存笔记都方便</em>
+          </button>
+          <p class="panel-note"><b>想拿到「一模一样」的动效：</b>用「复制/下载 HTML」或「复制 draw 源码」——那是原样的实现代码。给 AI 的提示词只保证风格接近，模型不同结果就不同。<a href="guide.html" target="_blank" rel="noopener">查看完整教程 →</a></p>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ══════════════════════ 动效卡片网格（覆盖式浏览层） ══════════════════════ -->
+  <section class="browser" id="browser" hidden>
+    <div class="browser-top">
+      <button class="ghost-btn sm back-btn" id="browser-back" aria-label="返回工作台">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回工作台
+      </button>
+      <div class="browser-head">
+        <div>
+          <p class="eyebrow">MOTION COLLECTION</p>
+          <h2><span id="browse-title">全部动效</span> <span id="browse-count" class="count">0</span></h2>
+          <p class="browser-desc">悬停即可实时预览，点击进入工作台调参与导出。</p>
+        </div>
+        <div class="browser-tools">
+          <span class="result-count" id="result-count"></span>
+          <label class="field compact"><span>排序</span>
+            <select id="sort">
+              <option value="default">默认顺序</option>
+              <option value="name">按名称</option>
+              <option value="dur-asc">时长从短到长</option>
+              <option value="cat">按分类</option>
+            </select>
+          </label>
+          <button class="ghost-btn sm" id="browser-close">收起浏览</button>
+        </div>
+      </div>
+      <!-- 三级筛选：大类 → 细类 → 高频标签（后两行按需出现） -->
+      <div class="browse-cats" id="browse-cats"></div>
+      <div class="browse-subs" id="browse-subs" hidden></div>
+      <div class="browse-tags" id="browse-tags" hidden></div>
+    </div>
+    <div class="card-grid" id="card-grid"></div>
+    <div class="empty-state" id="empty-state" hidden>
+      <span class="empty-symbol">✳</span>
+      <h3 id="empty-title">没有找到这个灵感</h3>
+      <p id="empty-desc">试试其他关键词，或者回到全部动效。</p>
+      <button class="ghost-btn" id="reset-filters">查看全部动效</button>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 视频风格（覆盖层 · 来自 codex 剪辑工作台的视觉合同） ══════════════════════ -->
+  <section class="vstyle" id="styles" hidden>
+    <div class="vstyle-top">
+      <button class="ghost-btn sm back-btn" id="styles-back" aria-label="返回工作台">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>返回工作台
+      </button>
+      <div class="vstyle-head">
+        <div>
+          <p class="eyebrow">VIDEO STYLE SYSTEM</p>
+          <h2>视频风格 <span id="style-count" class="count">2</span></h2>
+          <p class="vstyle-desc">来自 <b>codex 剪辑工作台</b>的两套正式视觉合同。每套都给出 <b>16:9 视频画面模板</b> 与 <b>3:4 封面模板</b>的固定案例 —— 配色、字体、圆角、禁用项全部按合同执行，可直接下载 HTML 或导出 PNG 当模板复用。</p>
+        </div>
+        <div class="vstyle-tools">
+          <span class="result-count" id="style-src">来源 · 认知翻倍视频剪辑工作台</span>
+          <button class="ghost-btn sm" id="styles-close">收起</button>
+        </div>
+      </div>
+      <div class="style-tabs" id="style-tabs" role="tablist" aria-label="选择视频风格"></div>
+    </div>
+
+    <div class="vstyle-body">
+      <aside class="vstyle-info" id="style-info"></aside>
+      <div class="vstyle-previews">
+        <figure class="tpl-card">
+          <figcaption>
+            <div class="tpl-title"><b>16:9 视频画面模板</b><em>1920×1080 预览 · 3840×2160 成片 · 30fps</em></div>
+            <div class="tpl-actions">
+              <button class="ghost-btn sm" data-tpl="html" data-kind="video">下载 HTML 模板</button>
+              <button class="ghost-btn sm" data-tpl="png" data-kind="video">导出 PNG</button>
+              <button class="ghost-btn sm" data-tpl="copy" data-kind="video">复制源码</button>
+            </div>
+          </figcaption>
+          <div class="tpl-wrap" id="tpl-video-wrap"></div>
+          <p class="tpl-note">顶部进度条 · 作者署名安全区 · 眉标 + 大字观点 + 副标题 · 右侧数据面板 · 底部字幕安全区（合同要求的关键帧都在这张里）</p>
+        </figure>
+        <figure class="tpl-card tpl-card--cover">
+          <figcaption>
+            <div class="tpl-title"><b>3:4 封面模板</b><em>1536×2048 · 抖音竖版封面</em></div>
+            <div class="tpl-actions">
+              <button class="ghost-btn sm" data-tpl="html" data-kind="cover">下载 HTML 模板</button>
+              <button class="ghost-btn sm" data-tpl="png" data-kind="cover">导出 PNG</button>
+              <button class="ghost-btn sm" data-tpl="copy" data-kind="cover">复制源码</button>
+            </div>
+          </figcaption>
+          <div class="tpl-wrap tpl-wrap--cover" id="tpl-cover-wrap"></div>
+          <p class="tpl-note">固定版式：顶部账号标签 + 中央骨白大标题（关键词高亮）+ 红色观点标签 + 金色标签 + 底部观点补充。只换文字，不改版式。</p>
+        </figure>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════ 使用方式 ══════════════════════ -->
+<div class="modal" id="help-modal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <span class="modal-brand">嘉Jaykou动效库 / 使用方式</span>
+      <button class="icon-btn" id="help-close" aria-label="关闭">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="eyebrow">从灵感到成片 · 三步</p>
+      <h2>不只是看动效，<br>而是把动效调成你的。</h2>
+      <ol class="help-list">
+        <li><b>1 选</b><p>点右上角 <code>动效库</code>（或按 <code>B</code>）：库内动效按 <b>10 个大类</b>收纳，顶部一排<b>分类快捷筛选</b>点一下就切，点大类展开细类与全部动效清单，点清单里的单元即进入工作台；<code>随机灵感</code> 骰子一键跳转，<code>/</code> 聚焦搜索。</p></li>
+        <li><b>2 调</b><p>右侧 <code>参数</code> 面板改文案、颜色、速度——每改一处画面立刻更新；<code>配色背景</code> 里一键换主题或改随机种子，同一个动效变成全新样子。</p></li>
+        <li><b>3 拿</b><p>右侧 <code>导出</code> 面板按用途选：视频用 MP4、公众号用 GIF、封面上用 PNG、嵌网站用单文件 HTML / React 组件 / iframe。</p></li>
+      </ol>
+
+      <p class="eyebrow" style="margin-top:26px">怎么把动效变成自己的 · 按需求选</p>
+      <div class="path-table">
+        <div class="path-row head"><span>你的目的</span><span>怎么做</span><span>一致度</span></div>
+        <div class="path-row"><span>要一个<b>一模一样</b>的动效放进自己项目</span><span><code>导出 → 复制 draw 源码</code> 或 <code>导出 → 复制/下载单文件 HTML</code></span><span class="ok">100%</span></div>
+        <div class="path-row"><span>让 AI 帮我把它<b>改造/扩展</b>成新版本</span><span><code>参数</code> 面板底部 → 选 <code>源码版</code> → 复制移植提示词</span><span class="ok">≈100%</span></div>
+        <div class="path-row"><span>只有一句想法，想让 AI <b>从零写</b>一个</span><span>选 <code>描述版</code> → 复制提示词</span><span class="mid">接近</span></div>
+        <div class="path-row"><span>要一段<b>能跑的代码起点</b>给 AI 补完</span><span>选 <code>骨架版</code> → 复制提示词</span><span class="mid">中等</span></div>
+      </div>
+      <p class="help-tip"><b>关键提醒：</b>AI 提示词不是"复制粘贴就能 100% 一样"——模型会重写实现，噪声、缓动、线条细节都会变。要原样复刻，请走<b>源码通道</b>（复制 draw 源码 / 单文件 HTML）；提示词的定位是"让 AI 照着我们的思路写，观感一致"。</p>
+      <p class="help-tip">想连续播放多个动效？调好后点 <code>+ 加入当前动效</code> 组成场景序列，可整条录制导出。</p>
+      <p class="modal-note">快捷键：空格 播放/暂停 · R 重播 · ←/→ 逐帧 · [ ] 上/下一个动效 · L 循环 · F 收藏 · T 明暗主题 · <b>V 视频风格</b> · B 展开动效库 · / 搜索 · 1/2/3 切换右侧面板 · 复制地址栏链接可分享当前动效<br><a href="guide.html" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">打开完整图文教程 guide.html →</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ 口播稿推荐 ══════════════════════ -->
+<div class="modal" id="script-modal" hidden>
+  <div class="modal-card script-card">
+    <h3>口播稿推荐 <em>SCRIPT MATCH</em></h3>
+    <p class="modal-sub">粘贴口播稿 / 分镜脚本，本地规则引擎逐句分析叙事节奏（开场 · 要点 · 收尾），按句意推荐合适的动效。全程不联网。</p>
+    <textarea id="script-input" rows="6" aria-label="口播稿内容" placeholder="例：大家好，欢迎来到我们的频道。今天这期我们聊聊 AI 如何改变剪辑流程。先看一组数据：短视频日均使用时长增长了 43%。重点来了——关键在于前三秒的留人。最后别忘了点赞关注，我们下期见。"></textarea>
+    <div class="script-actions">
+      <button class="primary-btn sm" id="script-analyze">分析并推荐</button>
+      <button class="ghost-btn sm" id="script-fill" hidden>一键生成序列（前 6 个）</button>
+      <span class="script-hint" id="script-hint"></span>
+    </div>
+    <div class="script-recs" id="script-recs"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script defer src="assets/js/bundle.js?v=20261016l"></script>
+<script>
+/* Service Worker：离线可访问（仅 https/localhost 生效）
+   ?v=3 让脚本 URL 变化，强制替换掉 v2 那版会让刷新 ERR_FAILED 的旧 SW；
+   updateViaCache:'none' 保证每次启动都绕过 HTTP 缓存检查更新。
+   放在 load 之后注册：不占用首屏解析与网络带宽的主线程时间 */
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  if (!(location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) return;
+  var go = function () {
+    navigator.serviceWorker.register('sw.js?v=3', { updateViaCache: 'none' }).catch(function () {});
+  };
+  if (document.readyState === 'complete') go();
+  else window.addEventListener('load', go, { once: true });
+})();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · Service Worker  v3
+/* 嘉Jaykou动效库 · Service Worker  v3
    策略：HTML/导航 → 网络优先（新版立刻生效，断网回退缓存）
         静态资源 → 缓存优先 + 后台静默更新（stale-while-revalidate）
    缓存版本变更时，旧缓存整体清除。
