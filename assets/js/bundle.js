@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效工作台 · 合并包 v202610161522 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效工作台 · 合并包 v202610161617 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -21418,7 +21418,20 @@ var src_default = GIFEncoder;
     var list = filtered();
     $('#result-count').textContent = '共 ' + list.length + ' 个动效 · ' + MF.categories.length + ' 个分类';
     $('#browse-count').textContent = list.length;
-    $('#empty-state').hidden = list.length > 0;
+    var empty = $('#empty-state');
+    empty.hidden = list.length > 0;
+    /* 空态文案按筛选来源区分：收藏空 vs 搜索无结果，引导动作不同 */
+    if (!list.length) {
+      if (S.filter.type === 'fav') {
+        $('#empty-title').textContent = '收藏夹还是空的';
+        $('#empty-desc').textContent = '逛到喜欢的动效时，点卡片右上角的 ☆ 收藏起来，就能在这里一键回看、导出收藏集。';
+        $('#reset-filters').textContent = '去逛逛全部动效';
+      } else {
+        $('#empty-title').textContent = '没有找到这个灵感';
+        $('#empty-desc').textContent = '试试其他关键词，或者回到全部动效。';
+        $('#reset-filters').textContent = '查看全部动效';
+      }
+    }
 
     list.forEach(function (eff, i) {
       var card = document.createElement('button');
