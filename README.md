@@ -36,6 +36,8 @@ python3 -m http.server 8899
 
 然后打开 <http://127.0.0.1:8899/>。
 
+macOS 用户可直接双击 `start.command`，它会起服务并自动打开浏览器（详见 `Mac运行说明.md`）。
+
 ## 目录
 
 ```
