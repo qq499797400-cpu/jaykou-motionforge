@@ -1,4 +1,4 @@
-/* 嘉Jaykou动效库 · 合并包 v202610191933 · 由 tools/build-bundle.py 生成 */
+/* 嘉Jaykou动效库 · 合并包 v202610191942 · 由 tools/build-bundle.py 生成 */
 /* ════════ assets/js/runtime-src.js ════════ */
 /* ==========================================================================
    Jaykou — Shared Runtime
@@ -22319,7 +22319,7 @@ var src_default = GIFEncoder;
 /* ════════════════════════════════════════════════════════════════════
    嘉Jaykou动效库 · 视频风格系统（VIDEO STYLE KIT）
    ────────────────────────────────────────────────────────────────────
-   数据来源：嘉Jaykou 剪辑工作台「认知翻倍视频剪辑工作台」的两套正式视觉合同
+   数据来源：嘉Jaykou 剪辑工作台沉淀的两套正式视觉合同
      · docs/styles/obsidian-glass-cognition-system.md （方法论 V4 · 默认）
      · docs/styles/black-gold-business-dossier.md    （方法论 V3 · 显式调用）
    两套风格不得混用，配色/字体/圆角/禁用项严格按合同执行。
