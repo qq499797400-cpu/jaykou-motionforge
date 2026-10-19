@@ -1268,7 +1268,7 @@ html[data-theme="light"] .stage-col {
 /* 舞台画布保持深色观感，其上的白色文字不受主题影响 */
 html[data-theme="light"] .stage-frame { border-radius: 18px; }
 
-/* ══════════════════ 视频风格板块（覆盖层 · 来自 codex 剪辑工作台的视觉合同） ══════════════════ */
+/* ══════════════════ 视频风格板块（覆盖层 · 来自 嘉Jaykou 剪辑工作台的视觉合同） ══════════════════ */
 .vstyle {
   position: fixed; inset: var(--top-h) 0 0 0; z-index: 30;
   background: color-mix(in srgb, var(--bg) 55%, transparent);

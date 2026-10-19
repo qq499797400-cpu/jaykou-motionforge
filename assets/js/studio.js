@@ -1321,7 +1321,7 @@
     touchVis = [];
   }
 
-  /* ══════════════════ 视频风格板块（视觉合同来自 codex 剪辑工作台） ══════════════════ */
+  /* ══════════════════ 视频风格板块（视觉合同来自 嘉Jaykou 剪辑工作台） ══════════════════ */
   var stylePick = (MF.VIDEO_STYLES && MF.VIDEO_STYLES[0]) ? MF.VIDEO_STYLES[0].id : null;
 
   function stylesOpen() { var el = $('#styles'); return !!el && !el.hidden; }
