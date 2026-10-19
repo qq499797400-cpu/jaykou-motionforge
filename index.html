@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>嘉Jaykou动效库</title>
-<meta name="description" content="嘉Jaykou动效库 —— 468 个动效在线可调、可导出 GIF/MP4/HTML/React，另附两套认知视频固定案例模板（黑曜玻璃 / 黑金商业档案）。">
+<meta name="description" content="嘉Jaykou动效库 —— 492 个动效在线可调、可导出 GIF/MP4/HTML/React，另附两套认知视频固定案例模板（黑曜玻璃 / 黑金商业档案）。">
 <meta name="keywords" content="动效,动画,Canvas,GIF导出,MP4导出,动效库,视频风格,黑曜玻璃,黑金商业档案,嘉Jaykou">
 <meta name="theme-color" content="#0D0F17">
 <!-- 防首屏主题闪烁（FOUC）：HTML 硬编码 light，dark 用户首绘会先闪浅色。
@@ -19,12 +19,12 @@ try {
 <!-- 社交分享卡片（og:image 必须绝对 URL，相对路径微信/Twitter 抓不到图） -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://qq499797400-cpu.github.io/jaykou-motionforge/">
-<meta property="og:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
-<meta property="og:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
+<meta property="og:title" content="嘉Jaykou动效库 · 492 个可调可导出的动效 + 两套视频案例模板">
+<meta property="og:description" content="492 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
 <meta property="og:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="嘉Jaykou动效库 · 468 个可调可导出的动效 + 两套视频案例模板">
-<meta name="twitter:description" content="468 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
+<meta name="twitter:title" content="嘉Jaykou动效库 · 492 个可调可导出的动效 + 两套视频案例模板">
+<meta name="twitter:description" content="492 个动效在线实时预览，参数随便调，一键导出 GIF / MP4 / 单文件 HTML / React 组件；另附黑曜玻璃、黑金商业档案两套认知视频固定案例模板。">
 <meta name="twitter:image" content="https://qq499797400-cpu.github.io/jaykou-motionforge/assets/og.png">
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -32,8 +32,8 @@ try {
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='none' stroke='%23FF5A1F' stroke-width='8'/><path d='M58 22 L36 54 L50 54 L42 80 L64 46 L50 46 Z' fill='%23fff'/></svg>">
 <!-- ⚠️ preload 的 URL 必须与下方 <script> 完全一致（含 ?v=），
      否则浏览器视作两个资源，1MB 的 bundle 会被下载两次 -->
-<link rel="preload" href="assets/js/bundle.js?v=20261016l" as="script">
-<link rel="stylesheet" href="assets/css/app.css?v=20261016m">
+<link rel="preload" href="assets/js/bundle.js?v=20261017d" as="script">
+<link rel="stylesheet" href="assets/css/app.css?v=20261017c">
 </head>
 <body>
 
@@ -91,7 +91,7 @@ try {
     <!-- ══════════════════════ 左侧 · 动效库 ══════════════════════ -->
     <aside class="rail rail-left">
       <nav class="tabs" id="type-tabs" aria-label="按类型筛选">
-        <button class="tab active" data-type="all" title="全库 468 个动效，按 10 大类 → 细类逐级筛选"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
+        <button class="tab active" data-type="all" title="全库 492 个动效，按 10 大类 → 细类逐级筛选"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg><span>全部动效</span><em id="c-all">0</em></button>
         <button class="tab" data-type="fav" title="你收藏的动效，可一键导出成收藏集"><svg viewBox="0 0 24 24"><path d="M6 4h12v17l-6-4-6 4z"/></svg><span>我的收藏</span><em id="c-fav">0</em></button>
       </nav>
 
@@ -214,6 +214,7 @@ try {
         <!-- 参数面板 -->
         <section class="panel" id="panel-params">
           <p class="panel-desc" id="cur-desc"></p>
+          <a class="src-line" id="cur-src" target="_blank" rel="noopener noreferrer" hidden></a>
           <div id="param-list" class="param-list"></div>
           <div class="param-foot">
             <button class="ghost-btn sm" id="param-reset">恢复默认</button>
@@ -485,7 +486,7 @@ try {
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script defer src="assets/js/bundle.js?v=20261016l"></script>
+<script defer src="assets/js/bundle.js?v=20261017d"></script>
 <script>
 /* Service Worker：离线可访问（仅 https/localhost 生效）
    ?v=3 让脚本 URL 变化，强制替换掉 v2 那版会让刷新 ERR_FAILED 的旧 SW；

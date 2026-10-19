@@ -82,7 +82,8 @@
       bg1: S.settings.bg1,
       bg2: S.settings.bg2,
       bgMode: S.settings.bgMode,
-      seed: S.settings.seed
+      seed: S.settings.seed,
+      settings: S.settings   /* 供 MF.paint 内解析 $accent 等引用 */
     };
   }
 
@@ -309,7 +310,7 @@
     if (f.q) {
       var q = f.q.toLowerCase();
       list = list.filter(function (e) {
-        return (e.name + ' ' + e.desc + ' ' + e.cat + ' ' + (e.sub || '') + ' ' + e.tags.join(' ') + ' ' + e.id).toLowerCase().indexOf(q) >= 0;
+        return (e.name + ' ' + e.desc + ' ' + e.cat + ' ' + (e.sub || '') + ' ' + e.tags.join(' ') + ' ' + e.id + ' ' + (e.src ? e.src.name : '')).toLowerCase().indexOf(q) >= 0;
       });
     }
     if (S.sort === 'name') list.sort(function (a, b) { return a.name.localeCompare(b.name, 'zh'); });
@@ -374,9 +375,12 @@
       var info = document.createElement('div');
       info.className = 'info';
       info.innerHTML = '<h3>' + esc(eff.name) + '</h3><p>' + esc(eff.desc) + '</p>' +
-        '<div class="row">' + eff.tags.slice(0, 3).map(function (t, k) {
-          return '<span class="t' + (k === 0 ? ' hot' : '') + '">' + esc(t) + '</span>';
-        }).join('') + '</div>';
+        '<div class="row">' +
+          (eff.src ? '<span class="t src-tag" title="灵感出处：' + esc(eff.src.name) + '">↗ ' + esc(eff.src.name) + '</span>' : '') +
+          eff.tags.slice(0, eff.src ? 2 : 3).map(function (t, k) {
+            return '<span class="t' + (k === 0 && !eff.src ? ' hot' : '') + '">' + esc(t) + '</span>';
+          }).join('') +
+        '</div>';
       card.appendChild(info);
 
       var rec = { el: card, id: eff.id, canvas: cvs, t: 0, painted: false, hoverKey: eff.id + ':' + i };
@@ -785,6 +789,17 @@
     $('#cur-cat').textContent = eff.cat + (eff.sub && eff.sub !== eff.cat ? ' · ' + eff.sub : '');
     $('#cur-dur').textContent = eff.dur + 's';
     $('#cur-desc').textContent = eff.desc;
+    /* 灵感出处：有 src 才显示，点击新窗口打开原站 */
+    var srcEl = $('#cur-src');
+    if (eff.src && eff.src.name) {
+      srcEl.hidden = false;
+      srcEl.href = eff.src.url || '#';
+      srcEl.innerHTML = '<span>灵感出处</span><b>' + esc(eff.src.name) + '</b><i>↗</i>';
+      srcEl.title = '查看原站：' + (eff.src.url || '');
+    } else {
+      srcEl.hidden = true;
+      srcEl.removeAttribute('href');
+    }
     $('#dur-input').value = S.current.duration;
   }
 

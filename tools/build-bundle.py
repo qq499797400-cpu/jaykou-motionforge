@@ -14,7 +14,7 @@ MANIFEST = (
     ['assets/js/runtime-src.js', 'assets/js/engine.js']
     + ['assets/js/effects-%02d.js' % i for i in range(1, 5)]
     + ['assets/js/forge.js']
-    + ['assets/js/effects-%02d.js' % i for i in range(5, 25)]
+    + ['assets/js/effects-%02d.js' % i for i in range(5, 26)]
     + ['assets/js/vendor/gifenc.js', 'assets/js/gif-export.js', 'assets/js/styles-kit.js', 'assets/js/studio.js']
 )
 

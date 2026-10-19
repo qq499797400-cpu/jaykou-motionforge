@@ -55,6 +55,7 @@
           ? (spec.poster === undefined ? 0.72 : spec.poster) : item.poster,
         desc: item.desc || '',
         tags: item.tags || [],
+        src: item.src || spec.src || null,   /* 灵感出处：{ name, url }，在工作台里可见可点 */
         params: params,
         draw: spec.draw
       });

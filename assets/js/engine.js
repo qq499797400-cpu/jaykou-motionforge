@@ -154,6 +154,8 @@
   /* ------------------------------ 光栅绘制 ------------------------------ */
   MF.paint = function (ctx, effect, params, t, cfg) {
     var W = cfg.w, H = cfg.h;
+    /* 统一在绘制边界解析 $accent / $accent2 等引用，draw 里拿到的永远是具体颜色 */
+    params = MF.resolveParams(effect, params, cfg.settings || MF.defaultSettings);
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     if (cfg.clear !== false) ctx.clearRect(0, 0, W, H);

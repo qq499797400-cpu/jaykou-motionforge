@@ -1370,3 +1370,29 @@ html[data-theme="light"] .vstyle { background: rgba(255, 255, 255, .88); }
   .style-tabs { flex-direction: column; }
   .st-tab { max-width: none; width: 100%; }
 }
+
+/* ══════════════════ 灵感出处（src） ══════════════════ */
+.src-line {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin: 0 0 12px; padding: 4px 10px 4px 8px;
+  border-radius: 99px; text-decoration: none;
+  font-size: 11px; line-height: 1;
+  color: var(--dim); background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  transition: .18s var(--ease);
+  max-width: 100%;
+}
+.src-line span { font-size: 10px; letter-spacing: .04em; opacity: .7; }
+.src-line b { font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.src-line i { font-style: normal; color: var(--accent); }
+.src-line:hover {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: var(--accent); color: var(--text);
+  transform: translateY(-1px);
+}
+.card .t.src-tag {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
