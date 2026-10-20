@@ -63,6 +63,20 @@ tools/build-bundle.py 把 31 个 JS 合并成 bundle.js，并同步生成品牌�
 python3 tools/build-bundle.py
 ```
 
+## 参考与灵感来源
+
+本站的定位与一批优秀动效/创意工具站对标而来，在此致谢：
+
+| 参考站 | 用在哪里 |
+| --- | --- |
+| [米思琪动效 · motionlab.msq-ai.com](https://motionlab.msq-ai.com) | 整站对标对象：画廊 + 分类 + 参数调节 + 导出的工作台形态，本站在此基础上加了收藏 / 序列 / 口播稿 / 视频风格板块 |
+| [motionface.cc](https://motionface.cc) | 手绘风动效批次（effects-24，23 个）的设计参考 |
+| [Aceternity UI](https://ui.aceternity.com) · [Magic UI](https://magicui.design) | 灯光 / 流星 / 极光 / 边框光束等签名效果族 |
+| [Remotion Templates](https://www.remotion.dev/templates) | 模板组织与导出思路参考 |
+| [Scrolltide](https://scrolltide.co) · [Kinetics](https://kinetics.colorion.co) · [Anime.js](https://animejs.com) 等 17 个资源站 | 灵感源批次（effects-25，24 个动效） |
+
+灵感源批次的 **24 个动效在工作台里直接标注了出处**：素材库卡片右上角和参数面板的「灵感出处」标签，点击即可跳转原站。
+
 ## 技术说明
 
 - 渲染全用原生 Canvas 2D，无第三方动效库
